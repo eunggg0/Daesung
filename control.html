@@ -126,6 +126,39 @@
     margin-top: 2px;
   }
 
+  /* P잔량 표시 */
+  .janryang-card {
+    width: 100%;
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(220,130,30,0.25);
+    border-radius: 20px;
+    padding: clamp(8px,1.5dvh,14px) clamp(14px,4vw,24px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    backdrop-filter: blur(20px);
+  }
+  .janryang-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.35);
+    text-transform: uppercase;
+  }
+  .janryang-value {
+    font-size: clamp(20px,3.5dvh,28px);
+    font-weight: 800;
+    color: #e8923a;
+    font-family: "Menlo","Consolas",monospace;
+    letter-spacing: -1px;
+  }
+  .janryang-ts {
+    font-size: 11px;
+    color: rgba(255,255,255,0.2);
+    margin-top: 2px;
+  }
+
   /* 메인 버튼 */
   .main-btn-wrap {
     position: relative;
@@ -434,6 +467,15 @@
     </div>
   </div>
 
+  <!-- P잔량 실시간 표시 -->
+  <div class="janryang-card">
+    <div>
+      <div class="janryang-label">P 잔량</div>
+      <div class="janryang-ts" id="janryangTs">—</div>
+    </div>
+    <div class="janryang-value" id="janryangVal">—</div>
+  </div>
+
   <!-- 메인 버튼 -->
   <div class="main-btn-wrap">
     <div class="btn-ring" id="btnRing"></div>
@@ -641,6 +683,14 @@ async function pollStatus() {
     const procOn = pd && pd.status === "on";
     document.getElementById("procStatus").textContent = procOn ? "● 실행 중" : "● 종료됨";
     document.getElementById("procStatus").style.color = procOn ? "#2ecc8a" : "rgba(255,255,255,0.3)";
+
+    // P잔량 실시간
+    const jr = await fetch(`${FIREBASE}/p_janryang.json`);
+    const jd = await jr.json();
+    if (jd && jd.value !== undefined) {
+      document.getElementById("janryangVal").textContent = jd.value;
+      document.getElementById("janryangTs").textContent = jd.ts || "";
+    }
 
     // PC 실시간 로그
     const lr = await fetch(`${FIREBASE}/logs.json`);
