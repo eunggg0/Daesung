@@ -12,7 +12,8 @@
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
   html, body {
-    height: 100dvh;
+    min-height: 100dvh;
+    height: auto;
     overflow-y: auto;
   }
 
@@ -40,9 +41,9 @@
   .container {
     width: 100%;
     max-width: 440px;
-    height: 100dvh;
+    min-height: 100dvh;
     padding: clamp(10px, 3dvh, 24px) clamp(12px, 4vw, 20px);
-    padding-bottom: clamp(10px, 2dvh, 16px);
+    padding-bottom: clamp(20px, 4dvh, 40px);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -368,8 +369,8 @@
   /* 로그 */
   .log-card {
     width: 100%;
-    flex: 1;
-    min-height: 0;
+    height: 200px;
+    flex-shrink: 0;
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(255,255,255,0.06);
     border-radius: 16px;
@@ -667,34 +668,43 @@ async function saveConfig() {
 async function pollStatus() {
   const connDot  = document.getElementById("connDot");
   const connText = document.getElementById("connText");
+
+  // 연결 상태 + 자동처리 상태
   try {
     const res = await fetch(`${FIREBASE}/status.json`);
     const data = await res.json();
-    connDot.className  = "conn-dot online";
+    connDot.className = "conn-dot online";
     connText.textContent = "Firebase 연결됨";
     if (data && data.status && data.status !== currentStatus) {
       setStatus(data.status);
       addLog(data.status === "running" ? "PC 자동처리 시작됨" : "PC 자동처리 종료됨",
              data.status === "running" ? "ok" : "");
     }
-    // 프로그램 실행 상태
-    const pr = await fetch(`${FIREBASE}/proc_status.json`);
-    const pd = await pr.json();
+  } catch (e) {
+    connDot.className = "conn-dot";
+    connText.textContent = "연결 끊김";
+  }
+
+  // 프로그램 실행 상태
+  try {
+    const pd = await (await fetch(`${FIREBASE}/proc_status.json`)).json();
     const procOn = pd && pd.status === "on";
     document.getElementById("procStatus").textContent = procOn ? "● 실행 중" : "● 종료됨";
     document.getElementById("procStatus").style.color = procOn ? "#2ecc8a" : "rgba(255,255,255,0.3)";
+  } catch (e) {}
 
-    // P잔량 실시간
-    const jr = await fetch(`${FIREBASE}/p_janryang.json`);
-    const jd = await jr.json();
+  // P잔량
+  try {
+    const jd = await (await fetch(`${FIREBASE}/p_janryang.json`)).json();
     if (jd && jd.value !== undefined) {
       document.getElementById("janryangVal").textContent = jd.value;
       document.getElementById("janryangTs").textContent = jd.ts || "";
     }
+  } catch (e) {}
 
-    // PC 실시간 로그
-    const lr = await fetch(`${FIREBASE}/logs.json`);
-    const ld = await lr.json();
+  // PC 실시간 로그
+  try {
+    const ld = await (await fetch(`${FIREBASE}/logs.json`)).json();
     if (ld && ld.ts && ld.ts !== lastLogTs) {
       lastLogTs = ld.ts;
       const body = document.getElementById("logBody");
@@ -709,10 +719,7 @@ async function pollStatus() {
         body.appendChild(div);
       });
     }
-  } catch (e) {
-    connDot.className  = "conn-dot";
-    connText.textContent = "연결 끊김";
-  }
+  } catch (e) {}
 }
 
 // 초기화
