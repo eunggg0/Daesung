@@ -488,6 +488,7 @@
 const FIREBASE = "https://daesung-f71ea-default-rtdb.firebaseio.com";
 let currentStatus = "idle";
 let isRunning = false;
+let lastLogTs = null;
 
 function uid() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
@@ -640,6 +641,24 @@ async function pollStatus() {
     const procOn = pd && pd.status === "on";
     document.getElementById("procStatus").textContent = procOn ? "● 실행 중" : "● 종료됨";
     document.getElementById("procStatus").style.color = procOn ? "#2ecc8a" : "rgba(255,255,255,0.3)";
+
+    // PC 실시간 로그
+    const lr = await fetch(`${FIREBASE}/logs.json`);
+    const ld = await lr.json();
+    if (ld && ld.ts && ld.ts !== lastLogTs) {
+      lastLogTs = ld.ts;
+      const body = document.getElementById("logBody");
+      body.innerHTML = "";
+      (ld.lines || []).slice().reverse().forEach(line => {
+        if (!line.trim()) return;
+        const div = document.createElement("div");
+        div.className = "log-item" +
+          (line.includes("완료") || line.includes("저장") ? " ok" :
+           line.includes("오류") || line.includes("경고") ? " err" : "");
+        div.innerHTML = `<span>${ld.ts}</span>${line}`;
+        body.appendChild(div);
+      });
+    }
   } catch (e) {
     connDot.className  = "conn-dot";
     connText.textContent = "연결 끊김";
