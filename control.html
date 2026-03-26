@@ -626,7 +626,7 @@ function toggleAction(e) {
 function step(id, delta) {
   const el = document.getElementById(id);
   const val = Math.round((parseFloat(el.value || 0) + delta) * 10) / 10;
-  if (val >= 0) el.value = val;
+  if (val >= 0) el.value = val.toFixed(1);
 }
 
 async function sendLauncher(cmd) {
