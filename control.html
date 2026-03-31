@@ -468,13 +468,19 @@
     </div>
   </div>
 
-  <!-- P잔량 실시간 표시 -->
+  <!-- 거래처명 + P잔량 실시간 표시 -->
   <div class="janryang-card">
-    <div>
-      <div class="janryang-label">P 잔량</div>
-      <div class="janryang-ts" id="janryangTs">—</div>
+    <div style="display:flex; align-items:center; justify-content:space-between; width:100%; margin-bottom:6px;">
+      <div>
+        <div class="janryang-label">현재 거래처</div>
+        <div id="custName" style="font-size:clamp(15px,2.5dvh,20px); font-weight:700; color:#e8ecf2; margin-top:2px;">—</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="janryang-label">P 잔량</div>
+        <div class="janryang-value" id="janryangVal" style="font-size:clamp(18px,3dvh,24px);">—</div>
+      </div>
     </div>
-    <div class="janryang-value" id="janryangVal">—</div>
+    <div class="janryang-ts" id="janryangTs">—</div>
   </div>
 
   <!-- 메인 버튼 -->
@@ -700,6 +706,14 @@ async function pollStatus() {
     if (jd && jd.value !== undefined) {
       document.getElementById("janryangVal").textContent = jd.value;
       document.getElementById("janryangTs").textContent = jd.ts || "";
+    }
+  } catch (e) {}
+
+  // 거래처명
+  try {
+    const cd = await (await fetch(`${FIREBASE}/cust_name.json`)).json();
+    if (cd && cd.name) {
+      document.getElementById("custName").textContent = cd.name;
     }
   } catch (e) {}
 
