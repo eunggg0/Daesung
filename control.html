@@ -451,6 +451,23 @@
     <h1>잔량 자동처리</h1>
   </div>
 
+  <!-- PC 선택 -->
+  <div style="width:100%; display:flex; gap:8px; align-items:center; flex-shrink:0;">
+    <select id="deviceSelect" onchange="switchDevice()" style="
+      flex:1; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.1);
+      background:rgba(255,255,255,0.05); color:#e8ecf2; font:bold 10pt 'Segoe UI';
+      appearance:none; -webkit-appearance:none;
+      background-image:url('data:image/svg+xml;utf8,<svg fill=\'%236b7280\' viewBox=\'0 0 24 24\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M7 10l5 5 5-5z\'/></svg>');
+      background-repeat:no-repeat; background-position:right 10px center; background-size:18px;
+    ">
+      <option value="">PC 선택...</option>
+    </select>
+    <button onclick="refreshDevices()" style="
+      padding:10px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.1);
+      background:rgba(255,255,255,0.05); color:#818cf8; font:bold 10pt 'Segoe UI'; cursor:pointer;
+    ">↻</button>
+  </div>
+
   <!-- 연결 상태 -->
   <div class="conn-bar">
     <div class="conn-dot" id="connDot"></div>
@@ -536,9 +553,43 @@
 
 <script>
 const FIREBASE = "https://daesung-f71ea-default-rtdb.firebaseio.com";
+let currentDevice = localStorage.getItem("selectedDevice") || "";
 let currentStatus = "idle";
 let isRunning = false;
 let lastLogTs = null;
+
+function fb(path) {
+  return `${FIREBASE}/devices/${currentDevice}/${path}`;
+}
+
+async function refreshDevices() {
+  try {
+    const d = await (await fetch(`${FIREBASE}/devices.json`)).json();
+    const sel = document.getElementById("deviceSelect");
+    const prev = sel.value;
+    sel.innerHTML = '<option value="">PC 선택...</option>';
+    if (d) {
+      for (const key of Object.keys(d)) {
+        const opt = document.createElement("option");
+        opt.value = key;
+        opt.textContent = key;
+        if (key === (currentDevice || prev)) opt.selected = true;
+        sel.appendChild(opt);
+      }
+    }
+  } catch(e) {}
+}
+
+function switchDevice() {
+  currentDevice = document.getElementById("deviceSelect").value;
+  localStorage.setItem("selectedDevice", currentDevice);
+  // 상태 초기화
+  document.getElementById("statusText").textContent = "확인 중...";
+  document.getElementById("procStatus").textContent = "● 확인 중";
+  document.getElementById("janryangVal").textContent = "—";
+  document.getElementById("custName").textContent = "—";
+  document.getElementById("logList").innerHTML = "";
+}
 
 function uid() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
@@ -599,8 +650,9 @@ function setStatus(status) {
 }
 
 async function sendCmd(cmd) {
+  if (!currentDevice) { showToast("PC를 먼저 선택하세요", "err"); return; }
   try {
-    const res = await fetch(`${FIREBASE}/command.json`, {
+    const res = await fetch(fb("command.json"), {
       method: "PUT",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({cmd, id: uid()})
@@ -636,8 +688,9 @@ function step(id, delta) {
 }
 
 async function sendLauncher(cmd) {
+  if (!currentDevice) { showToast("PC를 먼저 선택하세요", "err"); return; }
   try {
-    const res = await fetch(`${FIREBASE}/launcher.json`, {
+    const res = await fetch(fb("launcher.json"), {
       method: "PUT",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({cmd, id: uid()})
@@ -659,7 +712,7 @@ async function saveConfig() {
     return;
   }
   try {
-    const res = await fetch(`${FIREBASE}/config.json`, {
+    const res = await fetch(fb("config.json"), {
       method: "PUT",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({min, max, id: uid()})
@@ -673,12 +726,13 @@ async function saveConfig() {
 }
 
 async function pollStatus() {
+  if (!currentDevice) return;
   const connDot  = document.getElementById("connDot");
   const connText = document.getElementById("connText");
 
   // 연결 상태 + 자동처리 상태
   try {
-    const res = await fetch(`${FIREBASE}/status.json`);
+    const res = await fetch(fb("status.json"));
     const data = await res.json();
     connDot.className = "conn-dot online";
     connText.textContent = "Firebase 연결됨";
@@ -694,7 +748,7 @@ async function pollStatus() {
 
   // 프로그램 실행 상태
   try {
-    const pd = await (await fetch(`${FIREBASE}/proc_status.json`)).json();
+    const pd = await (await fetch(fb("proc_status.json"))).json();
     const procOn = pd && pd.status === "on";
     document.getElementById("procStatus").textContent = procOn ? "● 실행 중" : "● 종료됨";
     document.getElementById("procStatus").style.color = procOn ? "#2ecc8a" : "rgba(255,255,255,0.3)";
@@ -702,7 +756,7 @@ async function pollStatus() {
 
   // P잔량
   try {
-    const jd = await (await fetch(`${FIREBASE}/p_janryang.json`)).json();
+    const jd = await (await fetch(fb("p_janryang.json"))).json();
     if (jd && jd.value !== undefined) {
       document.getElementById("janryangVal").textContent = jd.value;
       document.getElementById("janryangTs").textContent = jd.ts || "";
@@ -711,7 +765,7 @@ async function pollStatus() {
 
   // 거래처명
   try {
-    const cd = await (await fetch(`${FIREBASE}/cust_name.json`)).json();
+    const cd = await (await fetch(fb("cust_name.json"))).json();
     if (cd && cd.name) {
       document.getElementById("custName").textContent = cd.name;
     }
@@ -719,7 +773,7 @@ async function pollStatus() {
 
   // PC 실시간 로그
   try {
-    const ld = await (await fetch(`${FIREBASE}/logs.json`)).json();
+    const ld = await (await fetch(fb("logs.json"))).json();
     if (ld && ld.ts && ld.ts !== lastLogTs) {
       lastLogTs = ld.ts;
       const body = document.getElementById("logBody");
@@ -740,6 +794,7 @@ async function pollStatus() {
 // 초기화
 setStatus("idle");
 addLog("앱 시작", "ok");
+refreshDevices();
 pollStatus();
 setInterval(pollStatus, 1000);
 </script>
