@@ -259,23 +259,33 @@ async function loadList() {
   let totalCnt = 0;
   el.innerHTML = customers.map(c => {
     totalCnt += c.count;
-    return `<div class="cust-item">
-      <div>
+    return `<div class="cust-item" style="flex-wrap:wrap; gap:8px;">
+      <div style="flex:1; min-width:120px;">
         <div class="cust-name">${c.name}</div>
-        <div class="cust-info">${c.count}건 · 잔량합계 ${c.total_jan.toFixed(1)}</div>
+        <div class="cust-info">대상 ${c.count}건 (${c.total_jan.toFixed(1)}) · 전체 ${c.all_jan.toFixed(1)}</div>
       </div>
-      <button class="cust-btn" onclick="processOne('${c.code}','${c.name}')">처리</button>
+      <div style="display:flex; align-items:center; gap:4px;">
+        <input type="number" id="keep_${c.code}" value="0" min="0" step="0.1"
+          style="width:50px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12);
+          border-radius:8px; color:#e8923a; font-size:13px; font-weight:700; text-align:center;
+          padding:6px 0; font-family:Consolas,monospace; outline:none;"
+          placeholder="남김">
+        <button class="cust-btn" onclick="processOne('${c.code}','${c.name}')">처리</button>
+      </div>
     </div>`;
   }).join('');
   addLog(`거래처 ${customers.length}개, 총 ${totalCnt}건`, "ok");
 }
 
 async function processOne(code, name) {
-  showToast(`${name} 처리 중...`);
-  addLog(`${name} 처리 시작`, "");
+  const keepEl = document.getElementById("keep_" + code);
+  const keep = keepEl ? parseFloat(keepEl.value) || 0 : 0;
+  const keepMsg = keep > 0 ? ` (${keep} 남김)` : "";
+  showToast(`${name} 처리 중...${keepMsg}`);
+  addLog(`${name} 처리 시작${keepMsg}`, "");
   const { min, max } = getRange();
   await sendDbCmd("config", { min, max });
-  const id = await sendDbCmd("process_one", { code, name });
+  const id = await sendDbCmd("process_one", { code, name, keep });
   if (!id) return;
   const result = await waitResult(id);
   if (!result) { showToast("응답 없음", "err"); return; }
