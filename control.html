@@ -305,7 +305,7 @@ async function pollStatus() {
   try {
     const pd = await (await fetch(fb("proc_status.json"))).json();
     const now = Math.floor(Date.now() / 1000);
-    const alive = pd && pd.status === "on" && pd.ts && (now - pd.ts) < 15;
+    const alive = pd && pd.status === "on" && pd.ts && (now - pd.ts) < 20;
     document.getElementById("connDot").className = alive ? "conn-dot online" : "conn-dot";
     document.getElementById("connText").textContent = alive ? "PC 연결됨" : "PC 연결 끊김";
     document.getElementById("procStatus").textContent = alive ? "● 실행 중" : "● 종료됨";
