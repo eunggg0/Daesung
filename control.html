@@ -365,17 +365,24 @@ async function loadList(){
   }
 
   let total=0;
+  const{min,max}=getRange();
   el.innerHTML=custs.map(c=>{
     total+=c.count;
     const hasTarget = c.count > 0;
-    return`<div class="cust-row">
-      <div class="cust-left">
+    return`<div class="cust-row" style="flex-direction:column;align-items:stretch;gap:8px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
         <div class="cust-name">${c.name}</div>
-        <div class="cust-meta">용기 <b>${c.total}</b>개${hasTarget ? ` · 대상 <b>${c.count}</b>건 (${c.total_jan.toFixed(1)})` : ''} · P잔량 ${c.all_jan.toFixed(1)}</div>
+        ${hasTarget
+          ? `<div style="display:flex;align-items:center;gap:4px;">
+              <input class="keep-input" id="keep_${c.code}" type="number" value="0" min="0" step="0.1" placeholder="남김">
+              <button class="cust-btn" onclick="processOne('${c.code}','${c.name}')">처리</button>
+            </div>`
+          : `<span style="font-size:10px;color:#10b981;font-weight:600">${min}~${max} 완료</span>`}
       </div>
-      <div class="cust-right">
-        ${hasTarget ? `<input class="keep-input" id="keep_${c.code}" type="number" value="0" min="0" step="0.1" placeholder="남김">
-        <button class="cust-btn" onclick="processOne('${c.code}','${c.name}')">처리</button>` : `<span style="font-size:10px;color:#10b981;font-weight:600">${min}~${max} 완료</span>`}
+      <div style="display:flex;gap:12px;font-size:11px;">
+        <span style="color:#475569;">총 용기 <b style="color:#94a3b8;">${c.total}</b>개</span>
+        <span style="color:#475569;">전체 잔량 <b style="color:#f59e0b;">${c.all_jan.toFixed(1)}</b></span>
+        ${hasTarget ? `<span style="color:#475569;">처리 대상 <b style="color:#34d399;">${c.count}</b>건 <b style="color:#34d399;">${c.total_jan.toFixed(1)}</b></span>` : ''}
       </div>
     </div>`;
   }).join('');
