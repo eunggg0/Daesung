@@ -367,14 +367,15 @@ async function loadList(){
   let total=0;
   el.innerHTML=custs.map(c=>{
     total+=c.count;
+    const hasTarget = c.count > 0;
     return`<div class="cust-row">
       <div class="cust-left">
         <div class="cust-name">${c.name}</div>
-        <div class="cust-meta"><b>${c.count}</b>건 · 대상 ${c.total_jan.toFixed(1)} · 전체 ${c.all_jan.toFixed(1)}</div>
+        <div class="cust-meta">용기 <b>${c.total}</b>개${hasTarget ? ` · 대상 <b>${c.count}</b>건 (${c.total_jan.toFixed(1)})` : ''} · P잔량 ${c.all_jan.toFixed(1)}</div>
       </div>
       <div class="cust-right">
-        <input class="keep-input" id="keep_${c.code}" type="number" value="0" min="0" step="0.1" placeholder="남김">
-        <button class="cust-btn" onclick="processOne('${c.code}','${c.name}')">처리</button>
+        ${hasTarget ? `<input class="keep-input" id="keep_${c.code}" type="number" value="0" min="0" step="0.1" placeholder="남김">
+        <button class="cust-btn" onclick="processOne('${c.code}','${c.name}')">처리</button>` : '<span style="font-size:11px;color:#334155">대상 없음</span>'}
       </div>
     </div>`;
   }).join('');
