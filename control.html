@@ -10,498 +10,125 @@
 <title>잔량자동처리</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-  html, body {
-    min-height: 100dvh;
-    height: auto;
-    overflow-y: auto;
-  }
-
+  html, body { min-height: 100dvh; height: auto; overflow-y: auto; }
   body {
     background: #0a0e16;
     font-family: -apple-system, "Segoe UI", sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    position: relative;
+    display: flex; flex-direction: column; align-items: center;
   }
-
-  /* 배경 글로우 */
   body::before {
-    content: '';
-    position: fixed;
-    width: 600px; height: 600px;
-    border-radius: 50%;
+    content: ''; position: fixed; width: 600px; height: 600px; border-radius: 50%;
     background: radial-gradient(circle, rgba(46,204,138,0.08) 0%, transparent 70%);
-    top: -100px; left: 50%; transform: translateX(-50%);
-    pointer-events: none;
+    top: -100px; left: 50%; transform: translateX(-50%); pointer-events: none;
   }
-
   .container {
-    width: 100%;
-    max-width: 440px;
-    min-height: 100dvh;
-    padding: clamp(10px, 3dvh, 24px) clamp(12px, 4vw, 20px);
-    padding-bottom: clamp(20px, 4dvh, 40px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: clamp(8px, 1.5dvh, 16px);
-    overflow: visible;
+    width: 100%; max-width: 440px; min-height: 100dvh;
+    padding: clamp(10px,3dvh,24px) clamp(12px,4vw,20px) clamp(20px,4dvh,40px);
+    display: flex; flex-direction: column; align-items: center;
+    gap: clamp(8px,1.5dvh,16px);
   }
-
-  /* 헤더 */
-  .header {
-    text-align: center;
-    flex-shrink: 0;
-  }
-  .header .logo {
-    font-size: clamp(9px, 1.5dvh, 11px);
-    font-weight: 700;
-    letter-spacing: 4px;
-    color: rgba(255,255,255,0.3);
-    text-transform: uppercase;
-    margin-bottom: 2px;
-  }
-  .header h1 {
-    font-size: clamp(16px, 2.5dvh, 22px);
-    font-weight: 700;
-    color: rgba(255,255,255,0.9);
-    letter-spacing: -0.5px;
-  }
-
-  /* 상태 카드 */
-  .status-card {
-    width: 100%;
-    flex-shrink: 0;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 20px;
-    padding: clamp(10px, 1.8dvh, 20px) clamp(14px, 4vw, 24px);
-    display: flex;
-    align-items: center;
-    gap: 14px;
+  .header { text-align: center; flex-shrink: 0; }
+  .header .logo { font-size: 11px; font-weight: 700; letter-spacing: 4px; color: rgba(255,255,255,0.3); text-transform: uppercase; margin-bottom: 2px; }
+  .header h1 { font-size: clamp(16px,2.5dvh,22px); font-weight: 700; color: rgba(255,255,255,0.9); }
+  .conn-bar { display: flex; align-items: center; gap: 6px; font-size: 11px; color: rgba(255,255,255,0.25); }
+  .conn-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.2); }
+  .conn-dot.online { background: #2ecc8a; box-shadow: 0 0 6px rgba(46,204,138,0.6); }
+  .card {
+    width: 100%; flex-shrink: 0;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px; padding: clamp(10px,1.8dvh,18px) clamp(14px,4vw,20px);
     backdrop-filter: blur(20px);
   }
-  .status-dot {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.2);
-    flex-shrink: 0;
-    transition: all 0.4s ease;
-  }
-  .status-dot.running {
-    background: #2ecc8a;
-    box-shadow: 0 0 12px rgba(46,204,138,0.8);
-    animation: pulse-dot 1.4s ease-in-out infinite;
-  }
-  .status-dot.idle {
-    background: rgba(255,255,255,0.25);
-    box-shadow: none;
-    animation: none;
-  }
-  @keyframes pulse-dot {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.8); }
-  }
-  .status-info { flex: 1; }
-  .status-label {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    color: rgba(255,255,255,0.3);
-    text-transform: uppercase;
-  }
-  .status-text {
-    font-size: 17px;
-    font-weight: 700;
-    color: rgba(255,255,255,0.85);
-    margin-top: 2px;
-    transition: color 0.4s ease;
-  }
-  .status-text.running { color: #2ecc8a; }
-  .status-time {
-    font-size: 11px;
-    color: rgba(255,255,255,0.25);
-    margin-top: 2px;
-  }
-
-  /* P잔량 표시 */
-  .janryang-card {
-    width: 100%;
-    flex-shrink: 0;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(220,130,30,0.25);
-    border-radius: 20px;
-    padding: clamp(8px,1.5dvh,14px) clamp(14px,4vw,24px);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    backdrop-filter: blur(20px);
-  }
-  .janryang-label {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    color: rgba(255,255,255,0.35);
-    text-transform: uppercase;
-  }
-  .janryang-value {
-    font-size: clamp(20px,3.5dvh,28px);
-    font-weight: 800;
-    color: #e8923a;
-    font-family: "Menlo","Consolas",monospace;
-    letter-spacing: -1px;
-  }
-  .janryang-ts {
-    font-size: 11px;
-    color: rgba(255,255,255,0.2);
-    margin-top: 2px;
-  }
-
-  /* 메인 버튼 */
-  .main-btn-wrap {
-    position: relative;
-    width: clamp(120px, 22dvh, 180px);
-    height: clamp(120px, 22dvh, 180px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  .btn-ring {
-    position: absolute;
-    width: 100%; height: 100%;
-    border-radius: 50%;
-    border: 1.5px solid rgba(46,204,138,0.2);
-    animation: ring-spin 8s linear infinite;
-    pointer-events: none;
-  }
-  .btn-ring::before {
-    content: '';
-    position: absolute;
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: #2ecc8a;
-    top: -4px; left: 50%; transform: translateX(-50%);
-    box-shadow: 0 0 10px rgba(46,204,138,0.9);
-  }
-  @keyframes ring-spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-  .main-btn {
-    width: clamp(100px, 18dvh, 150px);
-    height: clamp(100px, 18dvh, 150px);
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: white;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.15s ease, box-shadow 0.3s ease;
-    background: linear-gradient(145deg, #1a2535, #0d1520);
-    box-shadow: 0 0 40px rgba(46,204,138,0.15), inset 0 1px 0 rgba(255,255,255,0.06);
-    -webkit-user-select: none; user-select: none;
-  }
-  .main-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    border: 1.5px solid rgba(46,204,138,0.3);
-  }
-  .main-btn .btn-icon {
-    font-size: 36px;
-    display: block;
-    margin-bottom: 4px;
-    transition: transform 0.3s ease;
-  }
-  .main-btn .btn-label {
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 2px;
-  }
-  .main-btn:active {
-    transform: scale(0.93);
-  }
-  .main-btn.start-mode {
-    box-shadow: 0 0 50px rgba(46,204,138,0.25), inset 0 1px 0 rgba(255,255,255,0.06);
-  }
-  .main-btn.start-mode::before {
-    border-color: rgba(46,204,138,0.5);
-  }
-  .main-btn.stop-mode {
-    box-shadow: 0 0 50px rgba(255,79,106,0.25), inset 0 1px 0 rgba(255,255,255,0.06);
-  }
-  .main-btn.stop-mode::before {
-    border-color: rgba(255,79,106,0.5);
-  }
-  .btn-ripple {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.15);
-    transform: scale(0);
-    animation: ripple 0.5s linear;
-    pointer-events: none;
-  }
-  @keyframes ripple {
-    to { transform: scale(4); opacity: 0; }
-  }
-
-  /* 설정 카드 */
-  .config-card {
-    width: 100%;
-    flex-shrink: 0;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 20px;
-    padding: clamp(8px, 1.5dvh, 16px) clamp(12px, 4vw, 20px);
-    backdrop-filter: blur(20px);
-  }
-  .config-title {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    color: rgba(255,255,255,0.3);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-  .config-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-  .config-row:last-of-type { margin-bottom: 14px; }
-  .config-label {
-    font-size: 13px;
-    color: rgba(255,255,255,0.6);
-    flex: 1;
-  }
-  .config-stepper {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
+  .card-title { font-size: 10px; font-weight: 700; letter-spacing: 2px; color: rgba(255,255,255,0.3); text-transform: uppercase; margin-bottom: 10px; }
+  .config-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .config-label { font-size: 13px; color: rgba(255,255,255,0.6); flex: 1; }
+  .config-stepper { display: flex; align-items: center; gap: 6px; }
   .step-btn {
-    width: 38px; height: 38px;
-    border-radius: 10px;
-    border: 1px solid rgba(255,255,255,0.1);
-    background: rgba(255,255,255,0.06);
-    color: rgba(255,255,255,0.7);
-    font-size: 17px;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s ease;
-    -webkit-user-select: none; user-select: none;
-    line-height: 1;
+    width: 38px; height: 38px; border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.7); font-size: 17px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
   }
   .step-btn:active { background: rgba(255,255,255,0.15); transform: scale(0.92); }
-  .step-row { display: flex; flex-direction: row; gap: 4px; }
+  .step-row { display: flex; gap: 4px; }
   .config-input {
-    width: 76px;
-    background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 10px;
-    color: rgba(120,180,255,0.9);
-    font-size: 15px;
-    font-weight: 700;
-    font-family: "Menlo","Consolas",monospace;
-    text-align: center;
-    padding: 8px 0;
-    outline: none;
-    -webkit-appearance: none;
+    width: 76px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px; color: rgba(120,180,255,0.9); font-size: 15px; font-weight: 700;
+    font-family: "Menlo","Consolas",monospace; text-align: center; padding: 8px 0; outline: none;
   }
-  .config-input:focus {
-    border-color: rgba(46,204,138,0.5);
-    background: rgba(46,204,138,0.06);
+  .config-input:focus { border-color: rgba(46,204,138,0.5); background: rgba(46,204,138,0.06); }
+  .btn-primary {
+    width: 100%; padding: 14px; border-radius: 14px;
+    border: 1px solid rgba(46,204,138,0.3); background: rgba(46,204,138,0.08);
+    color: rgba(46,204,138,0.9); font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s;
   }
-  .config-save-btn {
-    width: 100%;
-    padding: 12px;
-    border-radius: 12px;
-    border: 1px solid rgba(46,204,138,0.3);
-    background: rgba(46,204,138,0.08);
-    color: rgba(46,204,138,0.9);
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    letter-spacing: 0.5px;
-    transition: all 0.2s ease;
+  .btn-primary:active { transform: scale(0.97); background: rgba(46,204,138,0.15); }
+  .btn-danger {
+    border-color: rgba(255,79,106,0.3); background: rgba(255,79,106,0.08);
+    color: rgba(255,79,106,0.9);
   }
-  .config-save-btn:active { transform: scale(0.97); background: rgba(46,204,138,0.15); }
-
-  /* 빠른 버튼 */
-  .quick-btns {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
+  .btn-danger:active { background: rgba(255,79,106,0.15); }
+  .cust-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
   }
-  .quick-btn {
-    padding: 16px 12px;
-    border-radius: 16px;
-    border: 1px solid rgba(255,255,255,0.07);
-    background: rgba(255,255,255,0.03);
-    color: rgba(255,255,255,0.7);
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: all 0.2s ease;
-    -webkit-user-select: none; user-select: none;
-    letter-spacing: 0.3px;
+  .cust-item:last-child { border-bottom: none; }
+  .cust-name { color: #e8ecf2; font-weight: 600; font-size: 14px; }
+  .cust-info { color: rgba(255,255,255,0.3); font-size: 11px; margin-top: 2px; }
+  .cust-btn {
+    padding: 8px 16px; border-radius: 10px; border: 1px solid rgba(46,204,138,0.3);
+    background: rgba(46,204,138,0.08); color: #2ecc8a; font-size: 12px; font-weight: 700;
+    cursor: pointer; white-space: nowrap;
   }
-  .quick-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.07); }
-  .quick-btn.green { border-color: rgba(46,204,138,0.2); color: rgba(46,204,138,0.85); }
-  .quick-btn.red   { border-color: rgba(255,79,106,0.2); color: rgba(255,79,106,0.85); }
-
-  /* 로그 */
+  .cust-btn:active { background: rgba(46,204,138,0.2); }
   .log-card {
-    width: 100%;
-    height: 200px;
-    flex-shrink: 0;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 16px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    width: 100%; height: 200px; flex-shrink: 0;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px; overflow: hidden; display: flex; flex-direction: column;
   }
   .log-header {
-    padding: 8px 16px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    color: rgba(255,255,255,0.25);
-    text-transform: uppercase;
-    flex-shrink: 0;
+    padding: 8px 16px; border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 10px; font-weight: 700; letter-spacing: 2px; color: rgba(255,255,255,0.25); text-transform: uppercase;
   }
-  .log-body {
-    padding: 10px 16px;
-    flex: 1;
-    overflow-y: auto;
-  }
-  .log-item {
-    font-size: 12px;
-    color: rgba(255,255,255,0.4);
-    line-height: 1.7;
-    font-family: "Menlo", "Consolas", monospace;
-  }
+  .log-body { padding: 10px 16px; flex: 1; overflow-y: auto; }
+  .log-item { font-size: 12px; color: rgba(255,255,255,0.4); line-height: 1.7; font-family: "Menlo","Consolas",monospace; }
   .log-item span { color: rgba(255,255,255,0.2); margin-right: 6px; }
   .log-item.ok { color: rgba(46,204,138,0.7); }
   .log-item.err { color: rgba(255,79,106,0.7); }
-
-  /* 연결 상태 */
-  .conn-bar {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    color: rgba(255,255,255,0.25);
-  }
-  .conn-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.2);
-  }
-  .conn-dot.online { background: #2ecc8a; box-shadow: 0 0 6px rgba(46,204,138,0.6); }
-
-  /* 토스트 */
   .toast {
-    position: fixed;
-    bottom: 40px; left: 50%; transform: translateX(-50%) translateY(20px);
-    background: rgba(30,40,60,0.95);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 50px;
-    padding: 12px 24px;
-    font-size: 14px;
-    font-weight: 600;
-    color: white;
-    opacity: 0;
-    transition: all 0.3s ease;
-    pointer-events: none;
-    white-space: nowrap;
-    backdrop-filter: blur(20px);
-    z-index: 999;
+    position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: rgba(30,40,60,0.95); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 50px; padding: 12px 24px; font-size: 14px; font-weight: 600; color: white;
+    opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap;
+    backdrop-filter: blur(20px); z-index: 999;
   }
-  .toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
-
 <div class="container">
-  <!-- 헤더 -->
   <div class="header">
     <div class="logo">TurnTable ODT</div>
     <h1>잔량 자동처리</h1>
   </div>
 
-  <!-- 연결 상태 -->
   <div class="conn-bar">
     <div class="conn-dot" id="connDot"></div>
     <span id="connText">연결 중...</span>
     <span style="margin-left:12px;" id="procStatus">● 확인 중</span>
   </div>
 
-  <!-- 상태 카드 -->
-  <div class="status-card">
-    <div class="status-dot" id="statusDot"></div>
-    <div class="status-info">
-      <div class="status-label">PC 상태</div>
-      <div class="status-text" id="statusText">확인 중...</div>
-      <div class="status-time" id="statusTime"></div>
-    </div>
-  </div>
-
-  <!-- 거래처명 + P잔량 실시간 표시 -->
-  <div class="janryang-card">
-    <div style="display:flex; align-items:center; justify-content:space-between; width:100%; margin-bottom:6px;">
-      <div>
-        <div class="janryang-label">현재 거래처</div>
-        <div id="custName" style="font-size:clamp(15px,2.5dvh,20px); font-weight:700; color:#e8ecf2; margin-top:2px;">—</div>
-      </div>
-      <div style="text-align:right;">
-        <div class="janryang-label">P 잔량</div>
-        <div class="janryang-value" id="janryangVal" style="font-size:clamp(18px,3dvh,24px);">—</div>
-      </div>
-    </div>
-    <div class="janryang-ts" id="janryangTs">—</div>
-  </div>
-
-  <!-- 메인 버튼 -->
-  <div class="main-btn-wrap">
-    <div class="btn-ring" id="btnRing"></div>
-    <button class="main-btn start-mode" id="mainBtn" onclick="toggleAction(event)">
-      <span class="btn-icon" id="btnIcon">▶</span>
-      <span class="btn-label" id="btnLabel">시작</span>
-    </button>
-  </div>
-
   <!-- 잔량 설정 -->
-  <div class="config-card">
-    <div class="config-title">잔량 범위 설정</div>
+  <div class="card">
+    <div class="card-title">잔량 범위 설정</div>
     <div class="config-row">
       <span class="config-label">▼ 최소값 (이상)</span>
       <div class="config-stepper">
         <input class="config-input" id="cfgMin" type="number" step="0.1" min="0" value="0.3">
         <div class="step-row">
-          <button class="step-btn" onclick="step('cfgMin', -0.1)">−</button>
-          <button class="step-btn" onclick="step('cfgMin', 0.1)">＋</button>
+          <button class="step-btn" onclick="step('cfgMin',-0.1)">−</button>
+          <button class="step-btn" onclick="step('cfgMin',0.1)">＋</button>
         </div>
       </div>
     </div>
@@ -510,20 +137,26 @@
       <div class="config-stepper">
         <input class="config-input" id="cfgMax" type="number" step="1" min="0" value="3.0">
         <div class="step-row">
-          <button class="step-btn" onclick="step('cfgMax', -1)">−</button>
-          <button class="step-btn" onclick="step('cfgMax', 1)">＋</button>
+          <button class="step-btn" onclick="step('cfgMax',-1)">−</button>
+          <button class="step-btn" onclick="step('cfgMax',1)">＋</button>
         </div>
       </div>
     </div>
-    <button class="config-save-btn" onclick="saveConfig()">저장 · PC에 적용</button>
   </div>
 
-  <!-- 프로그램 켜기/끄기 -->
-  <div class="quick-btns">
-    <button class="quick-btn green" onclick="sendLauncher('launch')">🚀 프로그램 켜기</button>
-    <button class="quick-btn red"   onclick="sendLauncher('kill')">⏻ 프로그램 끄기</button>
-    <button class="quick-btn" style="grid-column:span 2" onclick="sendCmd('home')">↩ 시작화면으로 이동</button>
+  <!-- 거래처 목록 -->
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <div class="card-title" style="margin:0;">거래처 목록</div>
+      <button class="step-btn" style="width:auto; padding:0 14px; font-size:12px; height:32px;" onclick="loadList()">새로고침</button>
+    </div>
+    <div id="custList" style="color:rgba(255,255,255,0.4); font-size:13px;">새로고침을 눌러 목록을 불러오세요</div>
   </div>
+
+  <!-- 전체 처리 -->
+  <button class="btn-primary" onclick="processAll()" style="font-size:15px; padding:16px;">
+    전체 거래처 잔량 일괄 처리
+  </button>
 
   <!-- 로그 -->
   <div class="log-card">
@@ -536,26 +169,14 @@
 
 <script>
 const FIREBASE = "https://daesung-f71ea-default-rtdb.firebaseio.com";
-let currentStatus = "idle";
-let isRunning = false;
-let lastLogTs = null;
 
-function fb(path) {
-  return `${FIREBASE}/${path}`;
-}
-
-function uid() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2);
-}
+function fb(path) { return `${FIREBASE}/${path}`; }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
 
 function showToast(msg, type = "info") {
   const t = document.getElementById("toast");
   t.textContent = msg;
-  t.style.background = type === "ok"
-    ? "rgba(46,204,138,0.9)"
-    : type === "err"
-    ? "rgba(255,79,106,0.9)"
-    : "rgba(30,40,60,0.95)";
+  t.style.background = type === "ok" ? "rgba(46,204,138,0.9)" : type === "err" ? "rgba(255,79,106,0.9)" : "rgba(30,40,60,0.95)";
   t.classList.add("show");
   setTimeout(() => t.classList.remove("show"), 2200);
 }
@@ -567,70 +188,7 @@ function addLog(msg, type = "") {
   div.className = "log-item " + type;
   div.innerHTML = `<span>${now}</span>${msg}`;
   body.prepend(div);
-  while (body.children.length > 12) body.removeChild(body.lastChild);
-}
-
-function setStatus(status) {
-  isRunning = status === "running";
-  currentStatus = status;
-  const dot  = document.getElementById("statusDot");
-  const text = document.getElementById("statusText");
-  const time = document.getElementById("statusTime");
-  const btn  = document.getElementById("mainBtn");
-  const icon = document.getElementById("btnIcon");
-  const lbl  = document.getElementById("btnLabel");
-  const ring = document.getElementById("btnRing");
-
-  if (isRunning) {
-    dot.className  = "status-dot running";
-    text.className = "status-text running";
-    text.textContent = "실행 중";
-    btn.className  = "main-btn stop-mode";
-    icon.textContent = "■";
-    lbl.textContent  = "정지";
-    ring.style.borderColor = "rgba(255,79,106,0.25)";
-    ring.style.setProperty("--ring-color", "#ff4f6a");
-  } else {
-    dot.className  = "status-dot idle";
-    text.className = "status-text";
-    text.textContent = "대기 중";
-    btn.className  = "main-btn start-mode";
-    icon.textContent = "▶";
-    lbl.textContent  = "시작";
-    ring.style.borderColor = "rgba(46,204,138,0.2)";
-  }
-  time.textContent = new Date().toLocaleTimeString("ko-KR", {hour12: false}) + " 기준";
-}
-
-async function sendCmd(cmd) {
-  try {
-    const res = await fetch(fb("command.json"), {
-      method: "PUT",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({cmd, id: uid()})
-    });
-    if (!res.ok) throw new Error("전송 실패");
-    const label = cmd === "start" ? "시작" : "정지";
-    addLog(`${label} 명령 전송`, cmd === "start" ? "ok" : "err");
-    showToast(`${label} 명령을 보냈어요`, cmd === "start" ? "ok" : "err");
-  } catch (e) {
-    addLog("오류: " + e.message, "err");
-    showToast("전송 실패", "err");
-  }
-}
-
-function toggleAction(e) {
-  // 리플 효과
-  const btn = e.currentTarget;
-  const r = document.createElement("span");
-  r.className = "btn-ripple";
-  const size = btn.offsetWidth;
-  r.style.width = r.style.height = size + "px";
-  r.style.left = r.style.top = "0px";
-  btn.appendChild(r);
-  r.addEventListener("animationend", () => r.remove());
-
-  sendCmd(isRunning ? "stop" : "start");
+  while (body.children.length > 20) body.removeChild(body.lastChild);
 }
 
 function step(id, delta) {
@@ -639,114 +197,125 @@ function step(id, delta) {
   if (val >= 0) el.value = val.toFixed(1);
 }
 
-async function sendLauncher(cmd) {
+async function sendDbCmd(cmd, extra = {}) {
+  const id = uid();
   try {
-    const res = await fetch(fb("launcher.json"), {
+    await fetch(fb("db_command.json"), {
       method: "PUT",
       headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({cmd, id: uid()})
+      body: JSON.stringify({ cmd, id, ...extra })
     });
-    if (!res.ok) throw new Error("전송 실패");
-    const label = cmd === "launch" ? "프로그램 켜기" : "프로그램 끄기";
-    addLog(`${label} 명령 전송`, cmd === "launch" ? "ok" : "err");
-    showToast(`${label} 명령을 보냈어요`, cmd === "launch" ? "ok" : "err");
+    return id;
   } catch (e) {
-    showToast("전송 실패", "err");
+    showToast("명령 전송 실패", "err");
+    return null;
   }
 }
 
-async function saveConfig() {
-  const min = parseFloat(document.getElementById("cfgMin").value);
-  const max = parseFloat(document.getElementById("cfgMax").value);
-  if (isNaN(min) || isNaN(max) || min >= max) {
-    showToast("최소값이 최대값보다 작아야 해요", "err");
+async function waitResult(cmdId, timeout = 10000) {
+  const start = Date.now();
+  while (Date.now() - start < timeout) {
+    try {
+      const r = await (await fetch(fb("db_result.json"))).json();
+      if (r && r.id === cmdId) return r;
+    } catch(e) {}
+    await new Promise(ok => setTimeout(ok, 500));
+  }
+  return null;
+}
+
+function getRange() {
+  const min = parseFloat(document.getElementById("cfgMin").value) || 0.3;
+  const max = parseFloat(document.getElementById("cfgMax").value) || 3.0;
+  return { min, max };
+}
+
+async function loadList() {
+  const el = document.getElementById("custList");
+  el.innerHTML = '<div style="color:rgba(255,255,255,0.3)">불러오는 중...</div>';
+
+  const { min, max } = getRange();
+  await sendDbCmd("config", { min, max });
+  const id = await sendDbCmd("list");
+  if (!id) return;
+
+  const result = await waitResult(id);
+  if (!result) {
+    el.innerHTML = '<div style="color:#ff4f6a">응답 없음 - PC 스크립트 실행 중인지 확인</div>';
     return;
   }
-  try {
-    const res = await fetch(fb("config.json"), {
-      method: "PUT",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({min, max, id: uid()})
-    });
-    if (!res.ok) throw new Error("저장 실패");
-    addLog(`잔량 설정 저장: ${min} ~ ${max}`, "ok");
-    showToast(`${min} ~ ${max} 로 설정됐어요`, "ok");
-  } catch (e) {
-    showToast("저장 실패", "err");
+  if (result.error) {
+    el.innerHTML = `<div style="color:#ff4f6a">오류: ${result.error}</div>`;
+    return;
   }
+
+  const customers = result.customers || [];
+  if (!customers.length) {
+    el.innerHTML = '<div style="color:rgba(255,255,255,0.4)">처리할 거래처가 없습니다</div>';
+    addLog("거래처 0건", "");
+    return;
+  }
+
+  let totalCnt = 0;
+  el.innerHTML = customers.map(c => {
+    totalCnt += c.count;
+    return `<div class="cust-item">
+      <div>
+        <div class="cust-name">${c.name}</div>
+        <div class="cust-info">${c.count}건 · 잔량합계 ${c.total_jan.toFixed(1)}</div>
+      </div>
+      <button class="cust-btn" onclick="processOne('${c.code}','${c.name}')">처리</button>
+    </div>`;
+  }).join('');
+  addLog(`거래처 ${customers.length}개, 총 ${totalCnt}건`, "ok");
+}
+
+async function processOne(code, name) {
+  showToast(`${name} 처리 중...`);
+  addLog(`${name} 처리 시작`, "");
+  const { min, max } = getRange();
+  await sendDbCmd("config", { min, max });
+  const id = await sendDbCmd("process_one", { code, name });
+  if (!id) return;
+  const result = await waitResult(id);
+  if (!result) { showToast("응답 없음", "err"); return; }
+  if (result.error) { showToast(`오류: ${result.error}`, "err"); return; }
+  showToast(`${name} ${result.count}건 완료!`, "ok");
+  addLog(`${name} ${result.count}건 처리`, "ok");
+  loadList();
+}
+
+async function processAll() {
+  if (!confirm("전체 거래처 잔량을 일괄 처리할까요?")) return;
+  showToast("전체 처리 중...");
+  addLog("전체 처리 시작", "");
+  const { min, max } = getRange();
+  await sendDbCmd("config", { min, max });
+  const id = await sendDbCmd("process_all");
+  if (!id) return;
+  const result = await waitResult(id);
+  if (!result) { showToast("응답 없음", "err"); return; }
+  if (result.error) { showToast(`오류: ${result.error}`, "err"); return; }
+  showToast(`전체 ${result.count}건 완료!`, "ok");
+  addLog(`전체 ${result.count}건 처리`, "ok");
+  loadList();
 }
 
 async function pollStatus() {
-  const connDot  = document.getElementById("connDot");
-  const connText = document.getElementById("connText");
-
-  // 연결 상태 + 자동처리 상태
-  try {
-    const res = await fetch(fb("status.json"));
-    const data = await res.json();
-    connDot.className = "conn-dot online";
-    connText.textContent = "Firebase 연결됨";
-    if (data && data.status && data.status !== currentStatus) {
-      setStatus(data.status);
-      addLog(data.status === "running" ? "PC 자동처리 시작됨" : "PC 자동처리 종료됨",
-             data.status === "running" ? "ok" : "");
-    }
-  } catch (e) {
-    connDot.className = "conn-dot";
-    connText.textContent = "연결 끊김";
-  }
-
-  // 프로그램 실행 상태 (15초 이내 heartbeat 있으면 실행 중)
   try {
     const pd = await (await fetch(fb("proc_status.json"))).json();
     const now = Math.floor(Date.now() / 1000);
     const alive = pd && pd.status === "on" && pd.ts && (now - pd.ts) < 15;
+    document.getElementById("connDot").className = alive ? "conn-dot online" : "conn-dot";
+    document.getElementById("connText").textContent = alive ? "PC 연결됨" : "PC 연결 끊김";
     document.getElementById("procStatus").textContent = alive ? "● 실행 중" : "● 종료됨";
     document.getElementById("procStatus").style.color = alive ? "#2ecc8a" : "rgba(255,255,255,0.3)";
   } catch (e) {}
-
-  // P잔량
-  try {
-    const jd = await (await fetch(fb("p_janryang.json"))).json();
-    if (jd && jd.value !== undefined) {
-      document.getElementById("janryangVal").textContent = jd.value;
-      document.getElementById("janryangTs").textContent = jd.ts || "";
-    }
-  } catch (e) {}
-
-  // 거래처명
-  try {
-    const cd = await (await fetch(fb("cust_name.json"))).json();
-    if (cd && cd.name) {
-      document.getElementById("custName").textContent = cd.name;
-    }
-  } catch (e) {}
-
-  // PC 실시간 로그
-  try {
-    const ld = await (await fetch(fb("logs.json"))).json();
-    if (ld && ld.ts && ld.ts !== lastLogTs) {
-      lastLogTs = ld.ts;
-      const body = document.getElementById("logBody");
-      body.innerHTML = "";
-      (ld.lines || []).slice().reverse().forEach(line => {
-        if (!line.trim()) return;
-        const div = document.createElement("div");
-        div.className = "log-item" +
-          (line.includes("완료") || line.includes("저장") ? " ok" :
-           line.includes("오류") || line.includes("경고") ? " err" : "");
-        div.innerHTML = `<span>${ld.ts}</span>${line}`;
-        body.appendChild(div);
-      });
-    }
-  } catch (e) {}
 }
 
-// 초기화
-setStatus("idle");
 addLog("앱 시작", "ok");
 pollStatus();
-setInterval(pollStatus, 1000);
+setInterval(pollStatus, 3000);
 </script>
 </body>
 </html>
