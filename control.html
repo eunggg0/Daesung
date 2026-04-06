@@ -385,7 +385,8 @@ async function loadList(){
 async function processOne(code, name){
   const keepEl=document.getElementById("keep_"+code);
   const keep=keepEl?parseFloat(keepEl.value)||0:0;
-  const tag=keep>0?` → ${keep} 남김`:"";
+  const tag=keep>0?` (${keep} 남김)`:"";
+  if(!confirm(`${name}${tag} 처리할까요?`))return;
   showToast(`${name} 처리 중...`);
   addLog(`${name} 처리 시작${tag}`,"info");
   const{min,max}=getRange();
