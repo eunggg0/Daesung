@@ -432,6 +432,8 @@ async function pollStatus(){
 addLog("앱 시작","info");
 pollStatus();
 setInterval(pollStatus,3000);
+loadList();
+setInterval(loadList,30000);
 </script>
 </body>
 </html>
