@@ -5,336 +5,432 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="잔량자동처리">
-<meta name="theme-color" content="#0a0e16">
-<title>잔량자동처리</title>
+<meta name="apple-mobile-web-app-title" content="TurnTable">
+<meta name="theme-color" content="#06080f">
+<title>TurnTable ODT</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { min-height: 100dvh; height: auto; overflow-y: auto; }
-  body {
-    background: #0a0e16;
-    font-family: -apple-system, "Segoe UI", sans-serif;
-    display: flex; flex-direction: column; align-items: center;
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{min-height:100dvh;overflow-y:auto}
+  body{
+    background:#06080f;
+    font-family:'Inter',-apple-system,'Segoe UI',sans-serif;
+    color:#e2e8f0;
+    display:flex;flex-direction:column;align-items:center;
   }
-  body::before {
-    content: ''; position: fixed; width: 600px; height: 600px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(46,204,138,0.08) 0%, transparent 70%);
-    top: -100px; left: 50%; transform: translateX(-50%); pointer-events: none;
+  body::before{
+    content:'';position:fixed;width:800px;height:800px;border-radius:50%;
+    background:radial-gradient(circle,rgba(99,102,241,0.06) 0%,rgba(14,165,233,0.03) 40%,transparent 70%);
+    top:-200px;left:50%;transform:translateX(-50%);pointer-events:none;
   }
-  .container {
-    width: 100%; max-width: 440px; min-height: 100dvh;
-    padding: clamp(10px,3dvh,24px) clamp(12px,4vw,20px) clamp(20px,4dvh,40px);
-    display: flex; flex-direction: column; align-items: center;
-    gap: clamp(8px,1.5dvh,16px);
+  body::after{
+    content:'';position:fixed;width:600px;height:600px;border-radius:50%;
+    background:radial-gradient(circle,rgba(16,185,129,0.04) 0%,transparent 60%);
+    bottom:-200px;right:-100px;pointer-events:none;
   }
-  .header { text-align: center; flex-shrink: 0; }
-  .header .logo { font-size: 11px; font-weight: 700; letter-spacing: 4px; color: rgba(255,255,255,0.3); text-transform: uppercase; margin-bottom: 2px; }
-  .header h1 { font-size: clamp(16px,2.5dvh,22px); font-weight: 700; color: rgba(255,255,255,0.9); }
-  .conn-bar { display: flex; align-items: center; gap: 6px; font-size: 11px; color: rgba(255,255,255,0.25); }
-  .conn-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.2); }
-  .conn-dot.online { background: #2ecc8a; box-shadow: 0 0 6px rgba(46,204,138,0.6); }
-  .card {
-    width: 100%; flex-shrink: 0;
-    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 20px; padding: clamp(10px,1.8dvh,18px) clamp(14px,4vw,20px);
-    backdrop-filter: blur(20px);
+  .app{
+    width:100%;max-width:420px;
+    padding:20px 16px 40px;
+    display:flex;flex-direction:column;gap:14px;
   }
-  .card-title { font-size: 10px; font-weight: 700; letter-spacing: 2px; color: rgba(255,255,255,0.3); text-transform: uppercase; margin-bottom: 10px; }
-  .config-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-  .config-label { font-size: 13px; color: rgba(255,255,255,0.6); flex: 1; }
-  .config-stepper { display: flex; align-items: center; gap: 6px; }
-  .step-btn {
-    width: 38px; height: 38px; border-radius: 10px;
-    border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.06);
-    color: rgba(255,255,255,0.7); font-size: 17px; font-weight: 700;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
+
+  /* Header */
+  .header{display:flex;align-items:center;justify-content:space-between;padding:4px 0;}
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand-icon{
+    width:36px;height:36px;border-radius:10px;
+    background:linear-gradient(135deg,#6366f1,#0ea5e9);
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;font-weight:900;color:white;
+    box-shadow:0 4px 15px rgba(99,102,241,0.3);
   }
-  .step-btn:active { background: rgba(255,255,255,0.15); transform: scale(0.92); }
-  .step-row { display: flex; gap: 4px; }
-  .config-input {
-    width: 76px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 10px; color: rgba(120,180,255,0.9); font-size: 15px; font-weight: 700;
-    font-family: "Menlo","Consolas",monospace; text-align: center; padding: 8px 0; outline: none;
+  .brand-text h1{font-size:15px;font-weight:800;letter-spacing:-0.3px;color:#f1f5f9;}
+  .brand-text span{font-size:10px;font-weight:500;color:#475569;letter-spacing:0.5px;}
+  .status-pill{
+    display:flex;align-items:center;gap:6px;
+    padding:6px 12px;border-radius:20px;
+    background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
+    font-size:11px;font-weight:600;color:#64748b;
   }
-  .config-input:focus { border-color: rgba(46,204,138,0.5); background: rgba(46,204,138,0.06); }
-  .btn-primary {
-    width: 100%; padding: 14px; border-radius: 14px;
-    border: 1px solid rgba(46,204,138,0.3); background: rgba(46,204,138,0.08);
-    color: rgba(46,204,138,0.9); font-size: 14px; font-weight: 700;
-    cursor: pointer; transition: all 0.2s;
+  .status-pill .dot{width:6px;height:6px;border-radius:50%;background:#334155;}
+  .status-pill .dot.on{background:#10b981;box-shadow:0 0 8px rgba(16,185,129,0.6);animation:blink 2s infinite;}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+
+  /* Cards */
+  .card{
+    background:rgba(255,255,255,0.02);
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:16px;padding:16px;
+    position:relative;overflow:hidden;
   }
-  .btn-primary:active { transform: scale(0.97); background: rgba(46,204,138,0.15); }
-  .btn-danger {
-    border-color: rgba(255,79,106,0.3); background: rgba(255,79,106,0.08);
-    color: rgba(255,79,106,0.9);
+  .card::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);
   }
-  .btn-danger:active { background: rgba(255,79,106,0.15); }
-  .cust-item {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+  .card-header{
+    display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;
   }
-  .cust-item:last-child { border-bottom: none; }
-  .cust-name { color: #e8ecf2; font-weight: 600; font-size: 14px; }
-  .cust-info { color: rgba(255,255,255,0.3); font-size: 11px; margin-top: 2px; }
-  .cust-btn {
-    padding: 8px 16px; border-radius: 10px; border: 1px solid rgba(46,204,138,0.3);
-    background: rgba(46,204,138,0.08); color: #2ecc8a; font-size: 12px; font-weight: 700;
-    cursor: pointer; white-space: nowrap;
+  .card-title{
+    font-size:11px;font-weight:700;letter-spacing:1.5px;
+    color:#475569;text-transform:uppercase;
   }
-  .cust-btn:active { background: rgba(46,204,138,0.2); }
-  .log-card {
-    width: 100%; height: 280px; flex-shrink: 0;
-    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 16px; overflow: hidden; display: flex; flex-direction: column;
+  .card-badge{
+    font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;
+    background:rgba(99,102,241,0.1);color:#818cf8;
   }
-  .log-header {
-    padding: 8px 16px; border-bottom: 1px solid rgba(255,255,255,0.05);
-    font-size: 10px; font-weight: 700; letter-spacing: 2px; color: rgba(255,255,255,0.25); text-transform: uppercase;
+
+  /* Range Config */
+  .range-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+  .range-row:last-child{margin-bottom:0;}
+  .range-label{flex:1;font-size:13px;font-weight:500;color:#94a3b8;}
+  .range-ctrl{display:flex;align-items:center;gap:4px;}
+  .range-input{
+    width:64px;height:38px;border-radius:10px;
+    background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+    color:#a5b4fc;font-size:14px;font-weight:700;font-family:'Menlo','Consolas',monospace;
+    text-align:center;outline:none;transition:all 0.2s;
   }
-  .log-body { padding: 10px 16px; flex: 1; overflow-y: auto; }
-  .log-item { font-size: 12px; color: rgba(255,255,255,0.4); line-height: 1.7; font-family: "Menlo","Consolas",monospace; }
-  .log-item span { color: rgba(255,255,255,0.2); margin-right: 6px; }
-  .log-item.ok { color: rgba(46,204,138,0.7); }
-  .log-item.err { color: rgba(255,79,106,0.7); }
-  .toast {
-    position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(20px);
-    background: rgba(30,40,60,0.95); border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 50px; padding: 12px 24px; font-size: 14px; font-weight: 600; color: white;
-    opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap;
-    backdrop-filter: blur(20px); z-index: 999;
+  .range-input:focus{border-color:#6366f1;background:rgba(99,102,241,0.06);}
+  .range-btn{
+    width:34px;height:34px;border-radius:8px;border:none;
+    background:rgba(255,255,255,0.04);color:#64748b;
+    font-size:16px;font-weight:700;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:all 0.15s;
   }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .range-btn:active{background:rgba(255,255,255,0.1);transform:scale(0.9);}
+
+  /* Customer List */
+  .cust-list{display:flex;flex-direction:column;gap:2px;}
+  .cust-row{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px 14px;border-radius:12px;
+    background:rgba(255,255,255,0.02);
+    transition:background 0.15s;
+  }
+  .cust-row:active{background:rgba(255,255,255,0.05);}
+  .cust-left{flex:1;min-width:0;}
+  .cust-name{font-size:14px;font-weight:700;color:#e2e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .cust-meta{font-size:11px;font-weight:500;color:#475569;margin-top:2px;}
+  .cust-meta b{color:#818cf8;font-weight:700;}
+  .cust-right{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+  .keep-input{
+    width:46px;height:32px;border-radius:8px;
+    background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+    color:#f59e0b;font-size:12px;font-weight:700;font-family:'Consolas',monospace;
+    text-align:center;outline:none;
+  }
+  .keep-input:focus{border-color:#f59e0b;background:rgba(245,158,11,0.06);}
+  .cust-btn{
+    height:32px;padding:0 14px;border-radius:8px;border:none;
+    background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(16,185,129,0.08));
+    color:#34d399;font-size:12px;font-weight:700;cursor:pointer;
+    transition:all 0.15s;
+  }
+  .cust-btn:active{transform:scale(0.95);background:rgba(16,185,129,0.25);}
+
+  /* Action Buttons */
+  .action-row{display:flex;gap:10px;}
+  .action-btn{
+    flex:1;padding:14px;border-radius:14px;border:none;
+    font-size:14px;font-weight:700;cursor:pointer;
+    transition:all 0.2s;position:relative;overflow:hidden;
+  }
+  .action-btn:active{transform:scale(0.97);}
+  .btn-refresh{
+    background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
+    color:#94a3b8;
+  }
+  .btn-refresh:active{background:rgba(255,255,255,0.08);}
+  .btn-process{
+    background:linear-gradient(135deg,#10b981,#059669);
+    color:white;
+    box-shadow:0 4px 20px rgba(16,185,129,0.25);
+  }
+  .btn-process:active{box-shadow:0 2px 10px rgba(16,185,129,0.15);}
+
+  /* Log */
+  .log-wrap{
+    background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);
+    border-radius:14px;overflow:hidden;
+  }
+  .log-header{
+    padding:10px 16px;
+    background:rgba(255,255,255,0.02);
+    border-bottom:1px solid rgba(255,255,255,0.04);
+    font-size:10px;font-weight:700;letter-spacing:1.5px;color:#334155;text-transform:uppercase;
+    display:flex;align-items:center;gap:6px;
+  }
+  .log-header::before{content:'';width:4px;height:4px;border-radius:50%;background:#6366f1;}
+  .log-body{
+    height:250px;padding:10px 16px;overflow-y:auto;
+    scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.06) transparent;
+  }
+  .log-body::-webkit-scrollbar{width:3px;}
+  .log-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px;}
+  .log-line{
+    font-size:11px;font-family:'Menlo','Consolas',monospace;
+    line-height:1.8;color:#475569;
+  }
+  .log-line .ts{color:#334155;margin-right:8px;}
+  .log-line.ok{color:#34d399;}
+  .log-line.err{color:#f87171;}
+  .log-line.info{color:#818cf8;}
+
+  /* Empty state */
+  .empty{
+    padding:30px 0;text-align:center;
+    font-size:13px;color:#334155;font-weight:500;
+  }
+  .empty-icon{font-size:28px;margin-bottom:8px;opacity:0.3;}
+
+  /* Toast */
+  .toast{
+    position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);
+    padding:12px 24px;border-radius:14px;
+    background:rgba(15,23,42,0.95);border:1px solid rgba(255,255,255,0.08);
+    backdrop-filter:blur(20px);
+    font-size:13px;font-weight:600;color:#e2e8f0;
+    opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap;z-index:999;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast.ok{border-color:rgba(16,185,129,0.3);color:#34d399;}
+  .toast.err{border-color:rgba(248,113,113,0.3);color:#f87171;}
+
+  /* Loading */
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .spinner{
+    width:16px;height:16px;border:2px solid rgba(255,255,255,0.1);
+    border-top-color:#6366f1;border-radius:50%;animation:spin 0.6s linear infinite;
+    display:inline-block;vertical-align:middle;margin-right:8px;
+  }
 </style>
 </head>
 <body>
-<div class="container">
+<div class="app">
+
+  <!-- Header -->
   <div class="header">
-    <div class="logo">TurnTable ODT</div>
-    <h1>잔량 자동처리</h1>
-  </div>
-
-  <div class="conn-bar">
-    <div class="conn-dot" id="connDot"></div>
-    <span id="connText">연결 중...</span>
-    <span style="margin-left:12px;" id="procStatus">● 확인 중</span>
-  </div>
-
-  <!-- 잔량 설정 -->
-  <div class="card">
-    <div class="card-title">잔량 범위 설정</div>
-    <div class="config-row">
-      <span class="config-label">▼ 최소값 (이상)</span>
-      <div class="config-stepper">
-        <input class="config-input" id="cfgMin" type="number" step="0.1" min="0" value="0.3">
-        <div class="step-row">
-          <button class="step-btn" onclick="step('cfgMin',-0.1)">−</button>
-          <button class="step-btn" onclick="step('cfgMin',0.1)">＋</button>
-        </div>
+    <div class="brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-text">
+        <h1>TurnTable ODT</h1>
+        <span>Automated Gas Management</span>
       </div>
     </div>
-    <div class="config-row">
-      <span class="config-label">▲ 최대값 (이하)</span>
-      <div class="config-stepper">
-        <input class="config-input" id="cfgMax" type="number" step="1" min="0" value="3.0">
-        <div class="step-row">
-          <button class="step-btn" onclick="step('cfgMax',-1)">−</button>
-          <button class="step-btn" onclick="step('cfgMax',1)">＋</button>
-        </div>
+    <div class="status-pill">
+      <div class="dot" id="statusDot"></div>
+      <span id="statusText">연결 중</span>
+    </div>
+  </div>
+
+  <!-- Range Config -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">잔량 범위</div>
+      <div class="card-badge">FILTER</div>
+    </div>
+    <div class="range-row">
+      <span class="range-label">최소값 (이상)</span>
+      <div class="range-ctrl">
+        <button class="range-btn" onclick="step('cfgMin',-0.1)">-</button>
+        <input class="range-input" id="cfgMin" type="number" step="0.1" min="0" value="0.3">
+        <button class="range-btn" onclick="step('cfgMin',0.1)">+</button>
+      </div>
+    </div>
+    <div class="range-row">
+      <span class="range-label">최대값 (이하)</span>
+      <div class="range-ctrl">
+        <button class="range-btn" onclick="step('cfgMax',-1)">-</button>
+        <input class="range-input" id="cfgMax" type="number" step="1" min="0" value="3.0">
+        <button class="range-btn" onclick="step('cfgMax',1)">+</button>
       </div>
     </div>
   </div>
 
-  <!-- 거래처 목록 -->
+  <!-- Customer List -->
   <div class="card">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-      <div class="card-title" style="margin:0;">거래처 목록</div>
-      <button class="step-btn" style="width:auto; padding:0 14px; font-size:12px; height:32px;" onclick="loadList()">새로고침</button>
+    <div class="card-header">
+      <div class="card-title">거래처</div>
+      <div class="card-badge" id="custCount">-</div>
     </div>
-    <div id="custList" style="color:rgba(255,255,255,0.4); font-size:13px;">새로고침을 눌러 목록을 불러오세요</div>
+    <div class="cust-list" id="custList">
+      <div class="empty">
+        <div class="empty-icon">&#9776;</div>
+        새로고침을 눌러 목록을 불러오세요
+      </div>
+    </div>
   </div>
 
-  <!-- 전체 처리 -->
-  <button class="btn-primary" onclick="processAll()" style="font-size:15px; padding:16px;">
-    전체 거래처 잔량 일괄 처리
-  </button>
+  <!-- Actions -->
+  <div class="action-row">
+    <button class="action-btn btn-refresh" onclick="loadList()">새로고침</button>
+    <button class="action-btn btn-process" onclick="processAll()">전체 처리</button>
+  </div>
 
-  <!-- 로그 -->
-  <div class="log-card">
+  <!-- Log -->
+  <div class="log-wrap">
     <div class="log-header">Activity Log</div>
     <div class="log-body" id="logBody"></div>
   </div>
-</div>
 
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
-const FIREBASE = "https://daesung-f71ea-default-rtdb.firebaseio.com";
+const FB = "https://daesung-f71ea-default-rtdb.firebaseio.com";
+function fb(p){return `${FB}/${p}`}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}
 
-function fb(path) { return `${FIREBASE}/${path}`; }
-function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
-
-function showToast(msg, type = "info") {
-  const t = document.getElementById("toast");
-  t.textContent = msg;
-  t.style.background = type === "ok" ? "rgba(46,204,138,0.9)" : type === "err" ? "rgba(255,79,106,0.9)" : "rgba(30,40,60,0.95)";
-  t.classList.add("show");
-  setTimeout(() => t.classList.remove("show"), 2200);
+function showToast(msg, type=""){
+  const t=document.getElementById("toast");
+  t.textContent=msg;
+  t.className="toast show"+(type?" "+type:"");
+  setTimeout(()=>t.classList.remove("show"),2500);
 }
 
-function addLog(msg, type = "") {
-  const body = document.getElementById("logBody");
-  const now = new Date().toLocaleTimeString("ko-KR", {hour12: false});
-  const div = document.createElement("div");
-  div.className = "log-item " + type;
-  div.innerHTML = `<span>${now}</span>${msg}`;
-  body.prepend(div);
-  while (body.children.length > 20) body.removeChild(body.lastChild);
+function addLog(msg, type=""){
+  const b=document.getElementById("logBody");
+  const now=new Date().toLocaleTimeString("ko-KR",{hour12:false});
+  const d=document.createElement("div");
+  d.className="log-line "+type;
+  d.innerHTML=`<span class="ts">${now}</span>${msg}`;
+  b.prepend(d);
+  while(b.children.length>30)b.removeChild(b.lastChild);
 }
 
-function step(id, delta) {
-  const el = document.getElementById(id);
-  const val = Math.round((parseFloat(el.value || 0) + delta) * 10) / 10;
-  if (val >= 0) el.value = val.toFixed(1);
+function step(id, delta){
+  const el=document.getElementById(id);
+  const val=Math.round((parseFloat(el.value||0)+delta)*10)/10;
+  if(val>=0)el.value=val.toFixed(1);
 }
 
-async function sendDbCmd(cmd, extra = {}) {
-  const id = uid();
-  try {
-    await fetch(fb("db_command.json"), {
-      method: "PUT",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({ cmd, id, ...extra })
+async function sendCmd(cmd, extra={}){
+  const id=uid();
+  try{
+    await fetch(fb("db_command.json"),{
+      method:"PUT",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({cmd,id,...extra})
     });
     return id;
-  } catch (e) {
-    showToast("명령 전송 실패", "err");
-    return null;
-  }
+  }catch(e){showToast("명령 전송 실패","err");return null}
 }
 
-async function waitResult(cmdId, timeout = 10000) {
-  const start = Date.now();
-  while (Date.now() - start < timeout) {
-    try {
-      const r = await (await fetch(fb("db_result.json"))).json();
-      if (r && r.id === cmdId) return r;
-    } catch(e) {}
-    await new Promise(ok => setTimeout(ok, 500));
+async function waitResult(cmdId, timeout=10000){
+  const start=Date.now();
+  while(Date.now()-start<timeout){
+    try{
+      const r=await(await fetch(fb("db_result.json"))).json();
+      if(r&&r.id===cmdId)return r;
+    }catch(e){}
+    await new Promise(ok=>setTimeout(ok,500));
   }
   return null;
 }
 
-function getRange() {
-  const min = parseFloat(document.getElementById("cfgMin").value) || 0.3;
-  const max = parseFloat(document.getElementById("cfgMax").value) || 3.0;
-  return { min, max };
+function getRange(){
+  return{
+    min:parseFloat(document.getElementById("cfgMin").value)||0.3,
+    max:parseFloat(document.getElementById("cfgMax").value)||3.0
+  };
 }
 
-async function loadList() {
-  const el = document.getElementById("custList");
-  el.innerHTML = '<div style="color:rgba(255,255,255,0.3)">불러오는 중...</div>';
+async function loadList(){
+  const el=document.getElementById("custList");
+  const badge=document.getElementById("custCount");
+  el.innerHTML='<div class="empty"><div class="spinner"></div>불러오는 중...</div>';
 
-  const { min, max } = getRange();
-  await sendDbCmd("config", { min, max });
-  const id = await sendDbCmd("list");
-  if (!id) return;
+  const{min,max}=getRange();
+  await sendCmd("config",{min,max});
+  const id=await sendCmd("list");
+  if(!id)return;
+  const result=await waitResult(id);
 
-  const result = await waitResult(id);
-  if (!result) {
-    el.innerHTML = '<div style="color:#ff4f6a">응답 없음 - PC 스크립트 실행 중인지 확인</div>';
+  if(!result){
+    el.innerHTML='<div class="empty" style="color:#f87171">PC 스크립트 응답 없음</div>';
     return;
   }
-  if (result.error) {
-    el.innerHTML = `<div style="color:#ff4f6a">오류: ${result.error}</div>`;
-    return;
-  }
-
-  const customers = result.customers || [];
-  if (!customers.length) {
-    el.innerHTML = '<div style="color:rgba(255,255,255,0.4)">처리할 거래처가 없습니다</div>';
-    addLog("거래처 0건", "");
+  if(result.error){
+    el.innerHTML=`<div class="empty" style="color:#f87171">${result.error}</div>`;
     return;
   }
 
-  let totalCnt = 0;
-  el.innerHTML = customers.map(c => {
-    totalCnt += c.count;
-    return `<div class="cust-item" style="flex-wrap:wrap; gap:8px;">
-      <div style="flex:1; min-width:120px;">
+  const custs=result.customers||[];
+  badge.textContent=custs.length+"개";
+
+  if(!custs.length){
+    el.innerHTML='<div class="empty"><div class="empty-icon">&#10003;</div>처리할 거래처가 없습니다</div>';
+    addLog("거래처 0건","info");
+    return;
+  }
+
+  let total=0;
+  el.innerHTML=custs.map(c=>{
+    total+=c.count;
+    return`<div class="cust-row">
+      <div class="cust-left">
         <div class="cust-name">${c.name}</div>
-        <div class="cust-info">대상 ${c.count}건 (${c.total_jan.toFixed(1)}) · 전체 ${c.all_jan.toFixed(1)}</div>
+        <div class="cust-meta"><b>${c.count}</b>건 · 대상 ${c.total_jan.toFixed(1)} · 전체 ${c.all_jan.toFixed(1)}</div>
       </div>
-      <div style="display:flex; align-items:center; gap:4px;">
-        <input type="number" id="keep_${c.code}" value="0" min="0" step="0.1"
-          style="width:50px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12);
-          border-radius:8px; color:#e8923a; font-size:13px; font-weight:700; text-align:center;
-          padding:6px 0; font-family:Consolas,monospace; outline:none;"
-          placeholder="남김">
+      <div class="cust-right">
+        <input class="keep-input" id="keep_${c.code}" type="number" value="0" min="0" step="0.1" placeholder="남김">
         <button class="cust-btn" onclick="processOne('${c.code}','${c.name}')">처리</button>
       </div>
     </div>`;
   }).join('');
-  addLog(`거래처 ${customers.length}개, 총 ${totalCnt}건`, "ok");
+  addLog(`${custs.length}개 거래처, ${total}건 조회`,"info");
 }
 
-async function processOne(code, name) {
-  const keepEl = document.getElementById("keep_" + code);
-  const keep = keepEl ? parseFloat(keepEl.value) || 0 : 0;
-  const keepMsg = keep > 0 ? ` (${keep} 남김)` : "";
-  showToast(`${name} 처리 중...${keepMsg}`);
-  addLog(`${name} 처리 시작${keepMsg}`, "");
-  const { min, max } = getRange();
-  await sendDbCmd("config", { min, max });
-  const id = await sendDbCmd("process_one", { code, name, keep });
-  if (!id) return;
-  const result = await waitResult(id);
-  if (!result) { showToast("응답 없음", "err"); return; }
-  if (result.error) { showToast(`오류: ${result.error}`, "err"); return; }
-  showToast(`${name} ${result.count}건 완료!`, "ok");
-  addLog(`${name} ${result.count}건 처리`, "ok");
-  if (result.details && result.details.length > 0) {
-    result.details.forEach(d => addLog(`  #${d.no} P${parseInt(d.qty)} 잔량 ${d.jan} → 0`, "ok"));
-  }
-  if (result.before_total !== undefined) {
-    addLog(`  잔량 ${result.before_total} → ${result.after_total}`, "ok");
-  }
+async function processOne(code, name){
+  const keepEl=document.getElementById("keep_"+code);
+  const keep=keepEl?parseFloat(keepEl.value)||0:0;
+  const tag=keep>0?` → ${keep} 남김`:"";
+  showToast(`${name} 처리 중...`);
+  addLog(`${name} 처리 시작${tag}`,"info");
+  const{min,max}=getRange();
+  await sendCmd("config",{min,max});
+  const id=await sendCmd("process_one",{code,name,keep});
+  if(!id)return;
+  const r=await waitResult(id);
+  if(!r){showToast("응답 없음","err");return}
+  if(r.error){showToast(r.error,"err");addLog(`오류: ${r.error}`,"err");return}
+  showToast(`${name} ${r.count}건 완료`,"ok");
+  if(r.details)r.details.forEach(d=>addLog(`  #${d.no} P${parseInt(d.qty)} ${d.jan} → 0`,"ok"));
+  if(r.before_total!==undefined)addLog(`  잔량 ${r.before_total} → ${r.after_total}`,"ok");
+  addLog(`${name} ${r.count}건 처리 완료`,"ok");
   loadList();
 }
 
-async function processAll() {
-  if (!confirm("전체 거래처 잔량을 일괄 처리할까요?")) return;
+async function processAll(){
+  if(!confirm("전체 거래처를 일괄 처리할까요?"))return;
   showToast("전체 처리 중...");
-  addLog("전체 처리 시작", "");
-  const { min, max } = getRange();
-  await sendDbCmd("config", { min, max });
-  const id = await sendDbCmd("process_all");
-  if (!id) return;
-  const result = await waitResult(id);
-  if (!result) { showToast("응답 없음", "err"); return; }
-  if (result.error) { showToast(`오류: ${result.error}`, "err"); return; }
-  showToast(`전체 ${result.count}건 완료!`, "ok");
-  if (result.customers) {
-    result.customers.forEach(c => addLog(`  ${c.name} ${c.count}건 (${c.total.toFixed(1)})`, "ok"));
-  }
-  addLog(`전체 ${result.count}건 처리 완료 · 총잔량 ${(result.total_jan||0).toFixed(1)} 제거`, "ok");
+  addLog("전체 처리 시작","info");
+  const{min,max}=getRange();
+  await sendCmd("config",{min,max});
+  const id=await sendCmd("process_all");
+  if(!id)return;
+  const r=await waitResult(id);
+  if(!r){showToast("응답 없음","err");return}
+  if(r.error){showToast(r.error,"err");return}
+  if(r.customers)r.customers.forEach(c=>addLog(`  ${c.name} ${c.count}건 (${c.total.toFixed(1)})`,"ok"));
+  showToast(`전체 ${r.count}건 완료`,"ok");
+  addLog(`전체 ${r.count}건 · ${(r.total_jan||0).toFixed(1)} 제거 완료`,"ok");
   loadList();
 }
 
-async function pollStatus() {
-  try {
-    const pd = await (await fetch(fb("proc_status.json"))).json();
-    const now = Math.floor(Date.now() / 1000);
-    const alive = pd && pd.status === "on" && pd.ts && (now - pd.ts) < 20;
-    document.getElementById("connDot").className = alive ? "conn-dot online" : "conn-dot";
-    document.getElementById("connText").textContent = alive ? "PC 연결됨" : "PC 연결 끊김";
-    document.getElementById("procStatus").textContent = alive ? "● 실행 중" : "● 종료됨";
-    document.getElementById("procStatus").style.color = alive ? "#2ecc8a" : "rgba(255,255,255,0.3)";
-  } catch (e) {}
+async function pollStatus(){
+  try{
+    const pd=await(await fetch(fb("proc_status.json"))).json();
+    const now=Math.floor(Date.now()/1000);
+    const alive=pd&&pd.status==="on"&&pd.ts&&(now-pd.ts)<20;
+    document.getElementById("statusDot").className="dot"+(alive?" on":"");
+    document.getElementById("statusText").textContent=alive?"연결됨":"오프라인";
+  }catch(e){}
 }
 
-addLog("앱 시작", "ok");
+addLog("앱 시작","info");
 pollStatus();
-setInterval(pollStatus, 3000);
+setInterval(pollStatus,3000);
 </script>
 </body>
 </html>
