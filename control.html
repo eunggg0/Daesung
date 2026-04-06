@@ -375,7 +375,7 @@ async function loadList(){
       </div>
       <div class="cust-right">
         ${hasTarget ? `<input class="keep-input" id="keep_${c.code}" type="number" value="0" min="0" step="0.1" placeholder="남김">
-        <button class="cust-btn" onclick="processOne('${c.code}','${c.name}')">처리</button>` : '<span style="font-size:11px;color:#334155">대상 없음</span>'}
+        <button class="cust-btn" onclick="processOne('${c.code}','${c.name}')">처리</button>` : `<span style="font-size:10px;color:#10b981;font-weight:600">${min}~${max} 완료</span>`}
       </div>
     </div>`;
   }).join('');
