@@ -114,6 +114,7 @@ body{
   transition:all 0.15s;
 }
 .cust-btn:active{transform:scale(0.95);box-shadow:0 1px 4px rgba(34,197,94,0.2);}
+.cust-btn-off{background:#e2e8f0;color:#94a3b8;box-shadow:none;pointer-events:none;}
 
 /* Actions */
 .action-row{display:flex;gap:10px;}
@@ -351,14 +352,9 @@ function loadList(){
         if(c.bottles&&c.bottles.length){
           bottles=c.bottles.map(function(b){return"P"+b.qty+"×"+b.cnt}).join(" ");
         }
-        var right="";
-        if(ht){
-          right='<div style="display:flex;align-items:center;gap:5px;">'
-            +'<input class="keep-input" id="keep_'+c.code+'" type="number" value="0" min="0" step="0.1" placeholder="남김">'
-            +"<button class=\"cust-btn\" onclick=\"processOne('"+c.code+"','"+c.name+"')\">처리</button></div>";
-        }else{
-          right='<span class="done-badge">'+rng.min+'~'+rng.max+' 완료 ✓</span>';
-        }
+        var right='<div style="display:flex;align-items:center;gap:5px;">'
+            +'<input class="keep-input" id="keep_'+c.code+'" type="number" value="0" min="0" step="0.1" placeholder="남김"'+(ht?'':' disabled style="opacity:0.4"')+'>'
+            +"<button class=\"cust-btn"+(ht?"":" cust-btn-off")+"\" onclick=\"processOne('"+c.code+"','"+c.name+"')\">"+(ht?"처리":"완료")+"</button></div>";
         var info='<span>잔량 <b style="color:#d97706;">'+c.all_jan.toFixed(1)+'</b></span>';
         if(ht){
           info+=' · <span>대상 <b style="color:#6366f1;">'+c.count+'</b>건 <b style="color:#6366f1;">'+c.total_jan.toFixed(1)+'</b></span>';
