@@ -381,8 +381,12 @@ async function loadList(){
     }else{
       right='<span style="font-size:10px;color:#10b981;font-weight:600">'+rng.min+'~'+rng.max+' 완료</span>';
     }
-    let info='<span style="color:#475569;">총 용기 <b style="color:#94a3b8;">'+c.total+'</b>개</span>'
-      +'<span style="color:#475569;">전체 잔량 <b style="color:#f59e0b;">'+c.all_jan.toFixed(1)+'</b></span>';
+    var bottles="";
+    if(c.bottles&&c.bottles.length){
+      bottles=c.bottles.map(function(b){return"P"+b.qty+"×"+b.cnt}).join(" ");
+    }
+    let info='<span style="color:#475569;">'+(bottles||("용기 "+c.total+"개"))+'</span>'
+      +'<span style="color:#475569;">잔량 <b style="color:#f59e0b;">'+c.all_jan.toFixed(1)+'</b></span>';
     if(ht){
       info+='<span style="color:#475569;">처리 대상 <b style="color:#34d399;">'+c.count+'</b>건 <b style="color:#34d399;">'+c.total_jan.toFixed(1)+'</b></span>';
     }
