@@ -4,223 +4,203 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="TurnTable">
-<meta name="theme-color" content="#06080f">
+<meta name="theme-color" content="#f0f4ff">
 <link rel="manifest" href="manifest.json">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>TurnTable ODT</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<title>TurnTable ODT</title>
 <style>
-  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html,body{min-height:100dvh;overflow-y:auto}
-  body{
-    background:#06080f;
-    font-family:'Inter',-apple-system,'Segoe UI',sans-serif;
-    color:#e2e8f0;
-    display:flex;flex-direction:column;align-items:center;
-  }
-  body::before{
-    content:'';position:fixed;width:800px;height:800px;border-radius:50%;
-    background:radial-gradient(circle,rgba(99,102,241,0.06) 0%,rgba(14,165,233,0.03) 40%,transparent 70%);
-    top:-200px;left:50%;transform:translateX(-50%);pointer-events:none;
-  }
-  body::after{
-    content:'';position:fixed;width:600px;height:600px;border-radius:50%;
-    background:radial-gradient(circle,rgba(16,185,129,0.04) 0%,transparent 60%);
-    bottom:-200px;right:-100px;pointer-events:none;
-  }
-  .app{
-    width:100%;max-width:420px;
-    padding:20px 16px 40px;
-    display:flex;flex-direction:column;gap:14px;
-  }
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100dvh;overflow-y:auto}
+body{
+  background:linear-gradient(180deg,#f0f4ff 0%,#e8edf8 50%,#f5f0ff 100%);
+  font-family:'Inter',-apple-system,'Segoe UI',sans-serif;
+  color:#1e293b;
+  display:flex;flex-direction:column;align-items:center;
+}
+.app{
+  width:100%;max-width:420px;
+  padding:16px 16px 40px;
+  display:flex;flex-direction:column;gap:12px;
+}
 
-  /* Header */
-  .header{display:flex;align-items:center;justify-content:space-between;padding:4px 0;}
-  .brand{display:flex;align-items:center;gap:10px;}
-  .brand-icon{
-    width:36px;height:36px;border-radius:10px;
-    background:linear-gradient(135deg,#6366f1,#0ea5e9);
-    display:flex;align-items:center;justify-content:center;
-    font-size:16px;font-weight:900;color:white;
-    box-shadow:0 4px 15px rgba(99,102,241,0.3);
-  }
-  .brand-text h1{font-size:15px;font-weight:800;letter-spacing:-0.3px;color:#f1f5f9;}
-  .brand-text span{font-size:10px;font-weight:500;color:#475569;letter-spacing:0.5px;}
-  .status-pill{
-    display:flex;align-items:center;gap:6px;
-    padding:6px 12px;border-radius:20px;
-    background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
-    font-size:11px;font-weight:600;color:#64748b;
-  }
-  .status-pill .dot{width:6px;height:6px;border-radius:50%;background:#334155;}
-  .status-pill .dot.on{background:#10b981;box-shadow:0 0 8px rgba(16,185,129,0.6);animation:blink 2s infinite;}
-  @keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+/* Header */
+.header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 4px;
+}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand-icon{
+  width:40px;height:40px;border-radius:14px;
+  background:linear-gradient(135deg,#6366f1,#8b5cf6,#a855f7);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:900;color:white;
+  box-shadow:0 4px 15px rgba(99,102,241,0.35);
+}
+.brand h1{font-size:16px;font-weight:800;color:#1e293b;letter-spacing:-0.3px;}
+.brand span{font-size:10px;font-weight:600;color:#94a3b8;letter-spacing:0.5px;display:block;margin-top:1px;}
+.status-pill{
+  display:flex;align-items:center;gap:6px;
+  padding:6px 14px;border-radius:20px;
+  background:white;
+  box-shadow:0 1px 4px rgba(0,0,0,0.06);
+  font-size:11px;font-weight:600;color:#94a3b8;
+}
+.dot{width:7px;height:7px;border-radius:50%;background:#cbd5e1;transition:all 0.3s;}
+.dot.on{background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,0.5);animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.5}}
 
-  /* Cards */
-  .card{
-    background:rgba(255,255,255,0.02);
-    border:1px solid rgba(255,255,255,0.06);
-    border-radius:16px;padding:16px;
-    position:relative;overflow:hidden;
-  }
-  .card::before{
-    content:'';position:absolute;top:0;left:0;right:0;height:1px;
-    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);
-  }
-  .card-header{
-    display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;
-  }
-  .card-title{
-    font-size:11px;font-weight:700;letter-spacing:1.5px;
-    color:#475569;text-transform:uppercase;
-  }
-  .card-badge{
-    font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;
-    background:rgba(99,102,241,0.1);color:#818cf8;
-  }
+/* Cards */
+.card{
+  background:white;
+  border-radius:20px;
+  padding:18px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.04),0 0 0 1px rgba(0,0,0,0.03);
+}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.card-title{font-size:12px;font-weight:800;letter-spacing:0.5px;color:#6366f1;text-transform:uppercase;}
+.card-badge{
+  font-size:10px;font-weight:700;padding:4px 10px;border-radius:8px;
+  background:linear-gradient(135deg,#ede9fe,#e0e7ff);color:#6366f1;
+}
 
-  /* Range Config */
-  .range-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
-  .range-row:last-child{margin-bottom:0;}
-  .range-label{flex:1;font-size:13px;font-weight:500;color:#94a3b8;}
-  .range-ctrl{display:flex;align-items:center;gap:4px;}
-  .range-input{
-    width:64px;height:38px;border-radius:10px;
-    background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
-    color:#a5b4fc;font-size:14px;font-weight:700;font-family:'Menlo','Consolas',monospace;
-    text-align:center;outline:none;transition:all 0.2s;
-  }
-  .range-input:focus{border-color:#6366f1;background:rgba(99,102,241,0.06);}
-  .range-btn{
-    width:34px;height:34px;border-radius:8px;border:none;
-    background:rgba(255,255,255,0.04);color:#64748b;
-    font-size:16px;font-weight:700;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;
-    transition:all 0.15s;
-  }
-  .range-btn:active{background:rgba(255,255,255,0.1);transform:scale(0.9);}
+/* Range */
+.range-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.range-row:last-child{margin-bottom:0;}
+.range-label{flex:1;font-size:13px;font-weight:600;color:#64748b;}
+.range-ctrl{display:flex;align-items:center;gap:4px;}
+.range-input{
+  width:60px;height:38px;border-radius:12px;
+  background:#f8fafc;border:2px solid #e2e8f0;
+  color:#6366f1;font-size:15px;font-weight:800;font-family:'Inter',monospace;
+  text-align:center;outline:none;transition:all 0.2s;
+}
+.range-input:focus{border-color:#6366f1;background:#f5f3ff;}
+.range-btn{
+  width:36px;height:36px;border-radius:10px;border:none;
+  background:#f1f5f9;color:#64748b;
+  font-size:18px;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.15s;
+}
+.range-btn:active{background:#e2e8f0;transform:scale(0.9);}
 
-  /* Customer List */
-  .cust-list{display:flex;flex-direction:column;gap:2px;}
-  .cust-row{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:12px 14px;border-radius:12px;
-    background:rgba(255,255,255,0.02);
-    transition:background 0.15s;
-  }
-  .cust-row:active{background:rgba(255,255,255,0.05);}
-  .cust-left{flex:1;min-width:0;}
-  .cust-name{font-size:14px;font-weight:700;color:#e2e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .cust-meta{font-size:11px;font-weight:500;color:#475569;margin-top:2px;}
-  .cust-meta b{color:#818cf8;font-weight:700;}
-  .cust-right{display:flex;align-items:center;gap:6px;flex-shrink:0;}
-  .keep-input{
-    width:46px;height:32px;border-radius:8px;
-    background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
-    color:#f59e0b;font-size:12px;font-weight:700;font-family:'Consolas',monospace;
-    text-align:center;outline:none;
-  }
-  .keep-input:focus{border-color:#f59e0b;background:rgba(245,158,11,0.06);}
-  .cust-btn{
-    height:32px;padding:0 14px;border-radius:8px;border:none;
-    background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(16,185,129,0.08));
-    color:#34d399;font-size:12px;font-weight:700;cursor:pointer;
-    transition:all 0.15s;
-  }
-  .cust-btn:active{transform:scale(0.95);background:rgba(16,185,129,0.25);}
+/* Customer List */
+.cust-row{
+  padding:14px;border-radius:14px;margin-bottom:6px;
+  background:#f8fafc;
+  transition:all 0.15s;
+}
+.cust-row:last-child{margin-bottom:0;}
+.cust-row:active{background:#f1f5f9;}
+.cust-name{font-size:15px;font-weight:700;color:#1e293b;}
+.cust-meta{font-size:11px;font-weight:500;color:#94a3b8;margin-top:3px;}
+.keep-input{
+  width:50px;height:34px;border-radius:10px;
+  background:white;border:2px solid #fde68a;
+  color:#d97706;font-size:13px;font-weight:700;font-family:'Inter',monospace;
+  text-align:center;outline:none;
+}
+.keep-input:focus{border-color:#f59e0b;background:#fffbeb;}
+.cust-btn{
+  height:34px;padding:0 16px;border-radius:10px;border:none;
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  color:white;font-size:12px;font-weight:700;cursor:pointer;
+  box-shadow:0 2px 8px rgba(34,197,94,0.3);
+  transition:all 0.15s;
+}
+.cust-btn:active{transform:scale(0.95);box-shadow:0 1px 4px rgba(34,197,94,0.2);}
 
-  /* Action Buttons */
-  .action-row{display:flex;gap:10px;}
-  .action-btn{
-    flex:1;padding:14px;border-radius:14px;border:none;
-    font-size:14px;font-weight:700;cursor:pointer;
-    transition:all 0.2s;position:relative;overflow:hidden;
-  }
-  .action-btn:active{transform:scale(0.97);}
-  .btn-refresh{
-    background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
-    color:#94a3b8;
-  }
-  .btn-refresh:active{background:rgba(255,255,255,0.08);}
-  .btn-process{
-    background:linear-gradient(135deg,#10b981,#059669);
-    color:white;
-    box-shadow:0 4px 20px rgba(16,185,129,0.25);
-  }
-  .btn-process:active{box-shadow:0 2px 10px rgba(16,185,129,0.15);}
+/* Actions */
+.action-row{display:flex;gap:10px;}
+.action-btn{
+  flex:1;padding:14px;border-radius:16px;border:none;
+  font-size:14px;font-weight:700;cursor:pointer;
+  transition:all 0.2s;
+}
+.action-btn:active{transform:scale(0.97);}
+.btn-refresh{
+  background:white;color:#64748b;
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
+}
+.btn-refresh:active{background:#f8fafc;}
+.btn-process{
+  background:linear-gradient(135deg,#6366f1,#8b5cf6);
+  color:white;
+  box-shadow:0 4px 15px rgba(99,102,241,0.35);
+}
 
-  /* Log */
-  .log-wrap{
-    background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);
-    border-radius:14px;overflow:hidden;
-  }
-  .log-header{
-    padding:10px 16px;
-    background:rgba(255,255,255,0.02);
-    border-bottom:1px solid rgba(255,255,255,0.04);
-    font-size:10px;font-weight:700;letter-spacing:1.5px;color:#334155;text-transform:uppercase;
-    display:flex;align-items:center;gap:6px;
-  }
-  .log-header::before{content:'';width:4px;height:4px;border-radius:50%;background:#6366f1;}
-  .log-body{
-    height:250px;padding:10px 16px;overflow-y:auto;
-    scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.06) transparent;
-  }
-  .log-body::-webkit-scrollbar{width:3px;}
-  .log-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px;}
-  .log-line{
-    font-size:11px;font-family:'Menlo','Consolas',monospace;
-    line-height:1.8;color:#475569;
-  }
-  .log-line .ts{color:#334155;margin-right:8px;}
-  .log-line.ok{color:#34d399;}
-  .log-line.err{color:#f87171;}
-  .log-line.info{color:#818cf8;}
+/* Log */
+.log-wrap{
+  background:white;border-radius:18px;overflow:hidden;
+  box-shadow:0 2px 12px rgba(0,0,0,0.04);
+}
+.log-header{
+  padding:12px 18px;
+  background:linear-gradient(135deg,#f8fafc,#f1f5f9);
+  border-bottom:1px solid #e2e8f0;
+  font-size:11px;font-weight:800;letter-spacing:1px;color:#6366f1;text-transform:uppercase;
+  display:flex;align-items:center;gap:6px;
+}
+.log-header::before{content:'';width:5px;height:5px;border-radius:50%;background:#6366f1;}
+.log-body{
+  height:220px;padding:12px 18px;overflow-y:auto;
+  scrollbar-width:thin;scrollbar-color:rgba(0,0,0,0.06) transparent;
+}
+.log-body::-webkit-scrollbar{width:3px;}
+.log-body::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.08);border-radius:3px;}
+.log-line{font-size:11px;font-family:'Inter',monospace;line-height:1.8;color:#94a3b8;}
+.log-line .ts{color:#cbd5e1;margin-right:8px;font-size:10px;}
+.log-line.ok{color:#16a34a;}
+.log-line.err{color:#dc2626;}
+.log-line.info{color:#6366f1;}
 
-  /* Empty state */
-  .empty{
-    padding:30px 0;text-align:center;
-    font-size:13px;color:#334155;font-weight:500;
-  }
-  .empty-icon{font-size:28px;margin-bottom:8px;opacity:0.3;}
+/* Empty */
+.empty{padding:30px 0;text-align:center;font-size:13px;color:#94a3b8;font-weight:500;}
+.empty-icon{font-size:32px;margin-bottom:8px;opacity:0.4;}
 
-  /* Toast */
-  .toast{
-    position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);
-    padding:12px 24px;border-radius:14px;
-    background:rgba(15,23,42,0.95);border:1px solid rgba(255,255,255,0.08);
-    backdrop-filter:blur(20px);
-    font-size:13px;font-weight:600;color:#e2e8f0;
-    opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap;z-index:999;
-  }
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-  .toast.ok{border-color:rgba(16,185,129,0.3);color:#34d399;}
-  .toast.err{border-color:rgba(248,113,113,0.3);color:#f87171;}
+/* Toast */
+.toast{
+  position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);
+  padding:12px 24px;border-radius:16px;
+  background:white;
+  box-shadow:0 8px 30px rgba(0,0,0,0.12);
+  font-size:13px;font-weight:700;color:#1e293b;
+  opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap;z-index:999;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.ok{color:#16a34a;border-left:4px solid #22c55e;}
+.toast.err{color:#dc2626;border-left:4px solid #ef4444;}
 
-  /* Loading */
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .spinner{
-    width:16px;height:16px;border:2px solid rgba(255,255,255,0.1);
-    border-top-color:#6366f1;border-radius:50%;animation:spin 0.6s linear infinite;
-    display:inline-block;vertical-align:middle;margin-right:8px;
-  }
+/* Spinner */
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{
+  width:18px;height:18px;border:2.5px solid #e2e8f0;
+  border-top-color:#6366f1;border-radius:50%;animation:spin 0.6s linear infinite;
+  display:inline-block;vertical-align:middle;margin-right:8px;
+}
+
+/* Done badge */
+.done-badge{
+  font-size:10px;font-weight:700;color:#22c55e;
+  background:#f0fdf4;padding:4px 10px;border-radius:8px;
+  border:1px solid #bbf7d0;
+}
 </style>
 </head>
 <body>
 <div class="app">
 
-  <!-- Header -->
   <div class="header">
     <div class="brand">
       <div class="brand-icon">T</div>
-      <div class="brand-text">
+      <div>
         <h1>TurnTable ODT</h1>
-        <span>Automated Gas Management</span>
+        <span>Gas Management System</span>
       </div>
     </div>
     <div class="status-pill">
@@ -229,7 +209,6 @@
     </div>
   </div>
 
-  <!-- Range Config -->
   <div class="card">
     <div class="card-header">
       <div class="card-title">잔량 범위</div>
@@ -238,7 +217,7 @@
     <div class="range-row">
       <span class="range-label">최소값 (이상)</span>
       <div class="range-ctrl">
-        <button class="range-btn" onclick="step('cfgMin',-0.1)">-</button>
+        <button class="range-btn" onclick="step('cfgMin',-0.1)">−</button>
         <input class="range-input" id="cfgMin" type="number" step="0.1" min="0" value="0.3">
         <button class="range-btn" onclick="step('cfgMin',0.1)">+</button>
       </div>
@@ -246,34 +225,31 @@
     <div class="range-row">
       <span class="range-label">최대값 (이하)</span>
       <div class="range-ctrl">
-        <button class="range-btn" onclick="step('cfgMax',-1)">-</button>
+        <button class="range-btn" onclick="step('cfgMax',-1)">−</button>
         <input class="range-input" id="cfgMax" type="number" step="1" min="0" value="3.0">
         <button class="range-btn" onclick="step('cfgMax',1)">+</button>
       </div>
     </div>
   </div>
 
-  <!-- Customer List -->
   <div class="card">
     <div class="card-header">
       <div class="card-title">거래처</div>
-      <div class="card-badge" id="custCount">-</div>
+      <div class="card-badge" id="custCount">—</div>
     </div>
-    <div class="cust-list" id="custList">
+    <div id="custList">
       <div class="empty">
-        <div class="empty-icon">&#9776;</div>
+        <div class="empty-icon">📋</div>
         새로고침을 눌러 목록을 불러오세요
       </div>
     </div>
   </div>
 
-  <!-- Actions -->
   <div class="action-row">
-    <button class="action-btn btn-refresh" onclick="loadList()">새로고침</button>
-    <button class="action-btn btn-process" onclick="processAll()">전체 처리</button>
+    <button class="action-btn btn-refresh" onclick="loadList()">🔄 새로고침</button>
+    <button class="action-btn btn-process" onclick="processAll()">⚡ 전체 처리</button>
   </div>
 
-  <!-- Log -->
   <div class="log-wrap">
     <div class="log-header">Activity Log</div>
     <div class="log-body" id="logBody"></div>
@@ -283,54 +259,56 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const FB = "https://daesung-f71ea-default-rtdb.firebaseio.com";
-function fb(p){return `${FB}/${p}`}
+const FB="https://daesung-f71ea-default-rtdb.firebaseio.com";
+function fb(p){return FB+"/"+p}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}
 
-function showToast(msg, type=""){
-  const t=document.getElementById("toast");
+function showToast(msg,type){
+  var t=document.getElementById("toast");
   t.textContent=msg;
   t.className="toast show"+(type?" "+type:"");
-  setTimeout(()=>t.classList.remove("show"),2500);
+  setTimeout(function(){t.classList.remove("show")},2500);
 }
 
-function addLog(msg, type=""){
-  const b=document.getElementById("logBody");
-  const now=new Date().toLocaleTimeString("ko-KR",{hour12:false});
-  const d=document.createElement("div");
-  d.className="log-line "+type;
-  d.innerHTML=`<span class="ts">${now}</span>${msg}`;
+function addLog(msg,type){
+  var b=document.getElementById("logBody");
+  var now=new Date().toLocaleTimeString("ko-KR",{hour12:false});
+  var d=document.createElement("div");
+  d.className="log-line "+(type||"");
+  d.innerHTML='<span class="ts">'+now+'</span>'+msg;
   b.prepend(d);
   while(b.children.length>30)b.removeChild(b.lastChild);
 }
 
-function step(id, delta){
-  const el=document.getElementById(id);
-  const val=Math.round((parseFloat(el.value||0)+delta)*10)/10;
+function step(id,delta){
+  var el=document.getElementById(id);
+  var val=Math.round((parseFloat(el.value||0)+delta)*10)/10;
   if(val>=0)el.value=val.toFixed(1);
 }
 
-async function sendCmd(cmd, extra={}){
-  const id=uid();
-  try{
-    await fetch(fb("db_command.json"),{
-      method:"PUT",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({cmd,id,...extra})
-    });
-    return id;
-  }catch(e){showToast("명령 전송 실패","err");return null}
+function sendCmd(cmd,extra){
+  var id=uid();
+  var data={cmd:cmd,id:id};
+  if(extra)for(var k in extra)data[k]=extra[k];
+  return fetch(fb("db_command.json"),{
+    method:"PUT",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(data)
+  }).then(function(){return id}).catch(function(){showToast("전송 실패","err");return null});
 }
 
-async function waitResult(cmdId, timeout=10000){
-  const start=Date.now();
-  while(Date.now()-start<timeout){
-    try{
-      const r=await(await fetch(fb("db_result.json"))).json();
-      if(r&&r.id===cmdId)return r;
-    }catch(e){}
-    await new Promise(ok=>setTimeout(ok,500));
-  }
-  return null;
+function waitResult(cmdId,timeout){
+  timeout=timeout||10000;
+  var start=Date.now();
+  return new Promise(function(resolve){
+    function poll(){
+      if(Date.now()-start>timeout){resolve(null);return}
+      fetch(fb("db_result.json")).then(function(r){return r.json()}).then(function(r){
+        if(r&&r.id===cmdId)resolve(r);
+        else setTimeout(poll,500);
+      }).catch(function(){setTimeout(poll,500)});
+    }
+    poll();
+  });
 }
 
 function getRange(){
@@ -340,125 +318,139 @@ function getRange(){
   };
 }
 
-async function loadList(){
-  const el=document.getElementById("custList");
-  const badge=document.getElementById("custCount");
+function loadList(){
+  var el=document.getElementById("custList");
+  var badge=document.getElementById("custCount");
   el.innerHTML='<div class="empty"><div class="spinner"></div>불러오는 중...</div>';
-
-  const{min,max}=getRange();
-  const id=await sendCmd("list",{min,max});
-  if(!id)return;
-  const result=await waitResult(id,15000);
-
-  if(!result){
-    el.innerHTML='<div class="empty" style="color:#f87171">PC 스크립트 응답 없음</div>';
-    return;
-  }
-  if(result.error){
-    el.innerHTML=`<div class="empty" style="color:#f87171">${result.error}</div>`;
-    return;
-  }
-
-  const custs=result.customers||[];
-  badge.textContent=custs.length+"개";
-
-  if(!custs.length){
-    el.innerHTML='<div class="empty"><div class="empty-icon">&#10003;</div>처리할 거래처가 없습니다</div>';
-    addLog("거래처 0건","info");
-    return;
-  }
-
-  let total=0;
-  const rng=getRange();
-  let html="";
-  for(const c of custs){
-    total+=c.count;
-    const ht=c.count>0;
-    let right="";
-    if(ht){
-      right='<div style="display:flex;align-items:center;gap:4px;">'
-        +'<input class="keep-input" id="keep_'+c.code+'" type="number" value="0" min="0" step="0.1" placeholder="남김">'
-        +'<button class="cust-btn" onclick="processOne(\''+c.code+"','"+c.name+"')\">처리</button></div>";
-    }else{
-      right='<span style="font-size:10px;color:#10b981;font-weight:600">'+rng.min+'~'+rng.max+' 완료</span>';
-    }
-    var bottles="";
-    if(c.bottles&&c.bottles.length){
-      bottles=c.bottles.map(function(b){return"P"+b.qty+"×"+b.cnt}).join(" ");
-    }
-    let info='<span style="color:#475569;">잔량 <b style="color:#f59e0b;">'+c.all_jan.toFixed(1)+'</b></span>';
-    if(ht){
-      info+='<span style="color:#475569;">대상 <b style="color:#34d399;">'+c.count+'</b>건 <b style="color:#34d399;">'+c.total_jan.toFixed(1)+'</b></span>';
-    }
-    html+='<div class="cust-row" style="flex-direction:column;align-items:stretch;gap:8px;">'
-      +'<div style="display:flex;align-items:center;justify-content:space-between;">'
-      +'<div style="display:flex;align-items:baseline;gap:8px;"><div class="cust-name">'+c.name+'</div>'
-      +'<span style="font-size:10px;color:#64748b;">'+(bottles||"")+'</span></div>'
-      +right+'</div>'
-      +'<div style="display:flex;gap:12px;font-size:11px;">'+info+'</div></div>';
-  }
-  el.innerHTML=html;
-  addLog(`${custs.length}개 거래처, ${total}건 조회`,"info");
+  var rng=getRange();
+  sendCmd("list",{min:rng.min,max:rng.max}).then(function(id){
+    if(!id)return;
+    waitResult(id,15000).then(function(result){
+      if(!result){
+        el.innerHTML='<div class="empty" style="color:#dc2626">PC 스크립트 응답 없음</div>';
+        return;
+      }
+      if(result.error){
+        el.innerHTML='<div class="empty" style="color:#dc2626">'+result.error+'</div>';
+        return;
+      }
+      var custs=result.customers||[];
+      badge.textContent=custs.length+"개";
+      if(!custs.length){
+        el.innerHTML='<div class="empty"><div class="empty-icon">✅</div>처리할 거래처가 없습니다</div>';
+        addLog("거래처 0건","info");
+        return;
+      }
+      var total=0;
+      var html="";
+      for(var i=0;i<custs.length;i++){
+        var c=custs[i];
+        total+=c.count;
+        var ht=c.count>0;
+        var bottles="";
+        if(c.bottles&&c.bottles.length){
+          bottles=c.bottles.map(function(b){return"P"+b.qty+"×"+b.cnt}).join(" ");
+        }
+        var right="";
+        if(ht){
+          right='<div style="display:flex;align-items:center;gap:5px;">'
+            +'<input class="keep-input" id="keep_'+c.code+'" type="number" value="0" min="0" step="0.1" placeholder="남김">'
+            +"<button class=\"cust-btn\" onclick=\"processOne('"+c.code+"','"+c.name+"')\">처리</button></div>";
+        }else{
+          right='<span class="done-badge">'+rng.min+'~'+rng.max+' 완료 ✓</span>';
+        }
+        var info='<span>잔량 <b style="color:#d97706;">'+c.all_jan.toFixed(1)+'</b></span>';
+        if(ht){
+          info+=' · <span>대상 <b style="color:#6366f1;">'+c.count+'</b>건 <b style="color:#6366f1;">'+c.total_jan.toFixed(1)+'</b></span>';
+        }
+        html+='<div class="cust-row">'
+          +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">'
+          +'<div style="display:flex;align-items:baseline;gap:8px;">'
+          +'<div class="cust-name">'+c.name+'</div>'
+          +'<span style="font-size:10px;color:#94a3b8;font-weight:500;">'+(bottles||"")+'</span>'
+          +'</div>'+right+'</div>'
+          +'<div class="cust-meta">'+info+'</div></div>';
+      }
+      el.innerHTML=html;
+      addLog(custs.length+"개 거래처, "+total+"건 조회","info");
+    });
+  });
 }
 
 var _processing=false;
-async function processOne(code, name){
+function processOne(code,name){
   if(_processing)return;
-  const keepEl=document.getElementById("keep_"+code);
-  const keep=keepEl?parseFloat(keepEl.value)||0:0;
-  const tag=keep>0?` (${keep} 남김)`:"";
-  if(!confirm(`${name}${tag} 처리할까요?`))return;
+  var keepEl=document.getElementById("keep_"+code);
+  var keep=keepEl?parseFloat(keepEl.value)||0:0;
+  var tag=keep>0?" ("+keep+" 남김)":"";
+  if(!confirm(name+tag+" 처리할까요?"))return;
   _processing=true;
-  showToast(`${name} 처리 중...`);
-  addLog(`${name} 처리 시작${tag}`,"info");
-  const{min,max}=getRange();
-  await sendCmd("config",{min,max});
-  const id=await sendCmd("process_one",{code,name,keep});
-  if(!id)return;
-  const r=await waitResult(id);
-  if(!r){showToast("응답 없음","err");_processing=false;return}
-  if(r.error){showToast(r.error,"err");addLog(`오류: ${r.error}`,"err");_processing=false;return}
-  showToast(`${name} ${r.count}건 완료`,"ok");
-  if(r.details)r.details.forEach(d=>addLog(`  #${d.no} P${parseInt(d.qty)} ${d.jan} → 0`,"ok"));
-  if(r.before_total!==undefined)addLog(`  잔량 ${r.before_total} → ${r.after_total}`,"ok");
-  addLog(`${name} ${r.count}건 처리 완료`,"ok");
-  _processing=false;
-  loadList();
+  showToast(name+" 처리 중...");
+  addLog(name+" 처리 시작"+tag,"info");
+  var rng=getRange();
+  sendCmd("config",{min:rng.min,max:rng.max}).then(function(){
+    return sendCmd("process_one",{code:code,name:name,keep:keep});
+  }).then(function(id){
+    if(!id){_processing=false;return}
+    return waitResult(id);
+  }).then(function(r){
+    if(!r){showToast("응답 없음","err");_processing=false;return}
+    if(r.error){showToast(r.error,"err");addLog("오류: "+r.error,"err");_processing=false;return}
+    showToast(name+" "+r.count+"건 완료","ok");
+    if(r.details){
+      for(var i=0;i<r.details.length;i++){
+        var d=r.details[i];
+        addLog("  #"+d.no+" P"+parseInt(d.qty)+" "+d.jan+" → 0","ok");
+      }
+    }
+    if(r.before_total!==undefined)addLog("  잔량 "+r.before_total+" → "+r.after_total,"ok");
+    addLog(name+" "+r.count+"건 처리 완료","ok");
+    _processing=false;
+    loadList();
+  });
 }
 
-async function processAll(){
+function processAll(){
   if(_processing)return;
   if(!confirm("전체 거래처를 일괄 처리할까요?"))return;
   _processing=true;
   showToast("전체 처리 중...");
   addLog("전체 처리 시작","info");
-  const{min,max}=getRange();
-  await sendCmd("config",{min,max});
-  const id=await sendCmd("process_all");
-  if(!id){_processing=false;return;}
-  const r=await waitResult(id,30000);
-  if(!r){showToast("응답 없음","err");_processing=false;return}
-  if(r.error){showToast(r.error,"err");_processing=false;return}
-  if(r.customers)r.customers.forEach(c=>addLog(`  ${c.name} ${c.count}건 (${c.total.toFixed(1)})`,"ok"));
-  showToast(`전체 ${r.count}건 완료`,"ok");
-  addLog(`전체 ${r.count}건 · ${(r.total_jan||0).toFixed(1)} 제거 완료`,"ok");
-  _processing=false;
-  loadList();
+  var rng=getRange();
+  sendCmd("config",{min:rng.min,max:rng.max}).then(function(){
+    return sendCmd("process_all");
+  }).then(function(id){
+    if(!id){_processing=false;return}
+    return waitResult(id,30000);
+  }).then(function(r){
+    if(!r){showToast("응답 없음","err");_processing=false;return}
+    if(r.error){showToast(r.error,"err");_processing=false;return}
+    if(r.customers){
+      for(var i=0;i<r.customers.length;i++){
+        var c=r.customers[i];
+        addLog("  "+c.name+" "+c.count+"건 ("+c.total.toFixed(1)+")","ok");
+      }
+    }
+    showToast("전체 "+r.count+"건 완료","ok");
+    addLog("전체 "+r.count+"건 · "+(r.total_jan||0).toFixed(1)+" 제거 완료","ok");
+    _processing=false;
+    loadList();
+  });
 }
 
-var _lastAlive=false;var _failCnt=0;
-async function pollStatus(){
-  try{
-    const res=await fetch(fb("proc_status.json"));
-    const pd=await res.json();
-    const now=Math.floor(Date.now()/1000);
+var _lastAlive=false,_failCnt=0;
+function pollStatus(){
+  fetch(fb("proc_status.json")).then(function(r){return r.json()}).then(function(pd){
+    var now=Math.floor(Date.now()/1000);
     _lastAlive=pd&&pd.status==="on"&&pd.ts&&(now-pd.ts)<30;
     _failCnt=0;
-  }catch(e){
+    updateStatus();
+  }).catch(function(){
     _failCnt++;
-    if(_failCnt<3)return;
-    _lastAlive=false;
-  }
+    if(_failCnt>=3){_lastAlive=false;updateStatus();}
+  });
+}
+function updateStatus(){
   document.getElementById("statusDot").className="dot"+(_lastAlive?" on":"");
   document.getElementById("statusText").textContent=_lastAlive?"연결됨":"오프라인";
 }
