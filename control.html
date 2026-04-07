@@ -379,8 +379,8 @@ function loadList(){
             +"<button class=\"cust-btn"+(ht?"":" cust-btn-off")+"\" onclick=\"processOne('"+c.code+"','"+c.name+"')\">"+(ht?"처리":"완료")+"</button></div>";
         var pj=c.p_jan||0;
         var bj=c.b_jan||0;
-        var info='<span>P잔량 <b style="color:#d97706;">'+pj.toFixed(1)+'</b></span>';
-        if(bj>0) info+=' · <span>B잔량 <b style="color:#dc2626;">'+bj.toFixed(1)+'</b></span>';
+        var info='<span>잔량 <b style="color:#d97706;">'+pj.toFixed(1)+'</b></span>';
+        if(bj>0) info+=' · <span>부탄 <b style="color:#dc2626;">'+bj.toFixed(1)+'</b></span>';
         if(ht){
           info+=' · <span>대상 <b style="color:#6366f1;">'+c.count+'</b>건 <b style="color:#6366f1;">'+c.total_jan.toFixed(1)+'</b></span>';
         }
