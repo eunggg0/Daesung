@@ -422,38 +422,53 @@ function loadList(){
   });
 }
 
+var _detailCache={};
 function showDetail(code,name){
-  var modal=document.getElementById("detailModal");
+  if(_detailCache[code]){
+    renderDetail(name,_detailCache[code]);
+    refreshDetail(code,name);
+    return;
+  }
   var body=document.getElementById("detailBody");
-  document.getElementById("detailTitle").textContent=name;
   body.innerHTML='<div class="empty"><div class="spinner"></div>불러오는 중...</div>';
-  modal.style.display="flex";
+  document.getElementById("detailModal").style.display="flex";
+  document.getElementById("detailTitle").textContent=name;
+  refreshDetail(code,name);
+}
+function refreshDetail(code,name){
   sendCmd("detail",{code:code}).then(function(id){
     if(!id)return;
     waitResult(id,10000).then(function(r){
-      if(!r||r.error){body.innerHTML='<div class="empty">데이터를 불러올 수 없습니다</div>';return}
-      var items=r.items||[];
-      if(!items.length){body.innerHTML='<div class="empty">용기 데이터가 없습니다</div>';return}
-      var rng=getRange();
-      var h='<div style="position:sticky;top:-1px;background:white;z-index:1;border-bottom:2px solid #e2e8f0;padding:8px 4px;margin-top:-1px;display:flex;font-size:12px;color:#94a3b8;font-weight:700;">'
-        +'<span style="width:18%;">번호</span><span style="width:18%;">용기</span><span style="width:22%;">잔량</span><span style="width:22%;">충전량</span><span style="width:20%;">시간</span></div>'
-        +'<table style="width:100%;border-collapse:collapse;font-size:12px;">';
-      for(var i=0;i<items.length;i++){
-        var d=items[i];
-        var isTarget=d.jan>0&&d.jan>=rng.min&&d.jan<=rng.max;
-        var color=d.jan>0?(isTarget?"#6366f1":"#d97706"):(d.jan<0?"#dc2626":"#94a3b8");
-        var bg=isTarget?"#f5f3ff":"";
-        h+='<tr style="border-bottom:1px solid #f1f5f9;'+(bg?'background:'+bg:'')+'">'
-          +'<td style="padding:8px 4px;color:#94a3b8;width:18%;">#'+d.no+'</td>'
-          +'<td style="font-weight:700;width:18%;">P'+d.qty+'</td>'
-          +'<td style="font-weight:700;color:'+color+';width:22%;">'+d.jan.toFixed(3)+'</td>'
-          +'<td style="color:#64748b;width:22%;">'+d.fill.toFixed(1)+'</td>'
-          +'<td style="color:#94a3b8;font-size:10px;width:20%;">'+d.time+'</td></tr>';
-      }
-      h+='</table>';
-      body.innerHTML=h;
+      if(!r||r.error)return;
+      _detailCache[code]=r.items||[];
+      renderDetail(name,_detailCache[code]);
     });
   });
+}
+function renderDetail(name,items){
+  var modal=document.getElementById("detailModal");
+  var body=document.getElementById("detailBody");
+  document.getElementById("detailTitle").textContent=name;
+  modal.style.display="flex";
+  if(!items||!items.length){body.innerHTML='<div class="empty">용기 데이터가 없습니다</div>';return}
+  var rng=getRange();
+  var h='<div style="position:sticky;top:-1px;background:white;z-index:1;border-bottom:2px solid #e2e8f0;padding:8px 4px;margin-top:-1px;display:flex;font-size:12px;color:#94a3b8;font-weight:700;">'
+    +'<span style="width:18%;">번호</span><span style="width:18%;">용기</span><span style="width:22%;">잔량</span><span style="width:22%;">충전량</span><span style="width:20%;">시간</span></div>'
+    +'<table style="width:100%;border-collapse:collapse;font-size:12px;">';
+  for(var i=0;i<items.length;i++){
+    var d=items[i];
+    var isTarget=d.jan>0&&d.jan>=rng.min&&d.jan<=rng.max;
+    var color=d.jan>0?(isTarget?"#6366f1":"#d97706"):(d.jan<0?"#dc2626":"#94a3b8");
+    var bg=isTarget?"#f5f3ff":"";
+    h+='<tr style="border-bottom:1px solid #f1f5f9;'+(bg?'background:'+bg:'')+'">'
+      +'<td style="padding:8px 4px;color:#94a3b8;width:18%;">#'+d.no+'</td>'
+      +'<td style="font-weight:700;width:18%;">P'+d.qty+'</td>'
+      +'<td style="font-weight:700;color:'+color+';width:22%;">'+d.jan.toFixed(3)+'</td>'
+      +'<td style="color:#64748b;width:22%;">'+d.fill.toFixed(1)+'</td>'
+      +'<td style="color:#94a3b8;font-size:10px;width:20%;">'+d.time+'</td></tr>';
+  }
+  h+='</table>';
+  body.innerHTML=h;
 }
 function closeDetail(){document.getElementById("detailModal").style.display="none";}
 
