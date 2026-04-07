@@ -377,7 +377,10 @@ function loadList(){
         var right='<div style="display:flex;align-items:center;gap:5px;">'
             +'<input class="keep-input" id="keep_'+c.code+'" type="number" value="0" min="0" step="0.1" placeholder="남김"'+(ht?'':' disabled style="opacity:0.4"')+'>'
             +"<button class=\"cust-btn"+(ht?"":" cust-btn-off")+"\" onclick=\"processOne('"+c.code+"','"+c.name+"')\">"+(ht?"처리":"완료")+"</button></div>";
-        var info='<span>잔량 <b style="color:#d97706;">'+c.all_jan.toFixed(1)+'</b></span>';
+        var pj=c.p_jan||0;
+        var bj=c.b_jan||0;
+        var info='<span>P잔량 <b style="color:#d97706;">'+pj.toFixed(1)+'</b></span>';
+        if(bj>0) info+=' · <span>B잔량 <b style="color:#dc2626;">'+bj.toFixed(1)+'</b></span>';
         if(ht){
           info+=' · <span>대상 <b style="color:#6366f1;">'+c.count+'</b>건 <b style="color:#6366f1;">'+c.total_jan.toFixed(1)+'</b></span>';
         }
@@ -417,7 +420,7 @@ function showDetail(code,name){
       var items=r.items||[];
       if(!items.length){body.innerHTML='<div class="empty">용기 데이터가 없습니다</div>';return}
       var rng=getRange();
-      var h='<div style="position:sticky;top:0;background:white;z-index:1;border-bottom:2px solid #e2e8f0;padding:8px 4px;display:flex;font-size:12px;color:#94a3b8;font-weight:700;">'
+      var h='<div style="position:sticky;top:-1px;background:white;z-index:1;border-bottom:2px solid #e2e8f0;padding:8px 4px;margin-top:-1px;display:flex;font-size:12px;color:#94a3b8;font-weight:700;">'
         +'<span style="width:18%;">번호</span><span style="width:18%;">용기</span><span style="width:22%;">잔량</span><span style="width:22%;">충전량</span><span style="width:20%;">시간</span></div>'
         +'<table style="width:100%;border-collapse:collapse;font-size:12px;">';
       for(var i=0;i<items.length;i++){
