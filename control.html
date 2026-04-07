@@ -291,7 +291,7 @@ function sendCmd(cmd,extra){
   var id=uid();
   var data={cmd:cmd,id:id};
   if(extra)for(var k in extra)data[k]=extra[k];
-  return fetch(fb("db_command.json"),{
+  return fetch(fb("db_queue/"+id+".json"),{
     method:"PUT",headers:{"Content-Type":"application/json"},
     body:JSON.stringify(data)
   }).then(function(){return id}).catch(function(){showToast("전송 실패","err");return null});
@@ -303,8 +303,12 @@ function waitResult(cmdId,timeout){
   return new Promise(function(resolve){
     function poll(){
       if(Date.now()-start>timeout){resolve(null);return}
-      fetch(fb("db_result.json")).then(function(r){return r.json()}).then(function(r){
-        if(r&&r.id===cmdId)resolve(r);
+      fetch(fb("db_result/"+cmdId+".json")).then(function(r){return r.json()}).then(function(r){
+        if(r&&r.id===cmdId){
+          // 결과 받았으면 삭제
+          fetch(fb("db_result/"+cmdId+".json"),{method:"DELETE"}).catch(function(){});
+          resolve(r);
+        }
         else setTimeout(poll,500);
       }).catch(function(){setTimeout(poll,500)});
     }
