@@ -446,18 +446,21 @@ async function processAll(){
   loadList();
 }
 
+var _lastAlive=false;var _failCnt=0;
 async function pollStatus(){
   try{
     const res=await fetch(fb("proc_status.json"));
     const pd=await res.json();
     const now=Math.floor(Date.now()/1000);
-    const alive=pd&&pd.status==="on"&&pd.ts&&(now-pd.ts)<30;
-    document.getElementById("statusDot").className="dot"+(alive?" on":"");
-    document.getElementById("statusText").textContent=alive?"연결됨":"오프라인";
+    _lastAlive=pd&&pd.status==="on"&&pd.ts&&(now-pd.ts)<30;
+    _failCnt=0;
   }catch(e){
-    document.getElementById("statusDot").className="dot";
-    document.getElementById("statusText").textContent="통신 오류";
+    _failCnt++;
+    if(_failCnt<3)return;
+    _lastAlive=false;
   }
+  document.getElementById("statusDot").className="dot"+(_lastAlive?" on":"");
+  document.getElementById("statusText").textContent=_lastAlive?"연결됨":"오프라인";
 }
 
 addLog("앱 시작","info");
