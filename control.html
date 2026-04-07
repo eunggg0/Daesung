@@ -400,7 +400,7 @@ function loadList(){
       }
       if(done.length){
         html+='<div style="font-size:11px;font-weight:800;color:#94a3b8;margin:12px 0 6px;letter-spacing:0.5px;">처리 완료 '+done.length+'개</div>';
-        for(var i=0;i<done.length;i++) html+=renderRow(done[i],false);
+        for(var i=0;i<done.length;i++) html+=renderRow(done[i],true);
       }
       el.innerHTML=html;
       addLog(custs.length+"개 거래처, "+total+"건 조회","info");
