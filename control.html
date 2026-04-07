@@ -401,11 +401,14 @@ async function loadList(){
   addLog(`${custs.length}개 거래처, ${total}건 조회`,"info");
 }
 
+var _processing=false;
 async function processOne(code, name){
+  if(_processing)return;
   const keepEl=document.getElementById("keep_"+code);
   const keep=keepEl?parseFloat(keepEl.value)||0:0;
   const tag=keep>0?` (${keep} 남김)`:"";
   if(!confirm(`${name}${tag} 처리할까요?`))return;
+  _processing=true;
   showToast(`${name} 처리 중...`);
   addLog(`${name} 처리 시작${tag}`,"info");
   const{min,max}=getRange();
@@ -413,29 +416,33 @@ async function processOne(code, name){
   const id=await sendCmd("process_one",{code,name,keep});
   if(!id)return;
   const r=await waitResult(id);
-  if(!r){showToast("응답 없음","err");return}
-  if(r.error){showToast(r.error,"err");addLog(`오류: ${r.error}`,"err");return}
+  if(!r){showToast("응답 없음","err");_processing=false;return}
+  if(r.error){showToast(r.error,"err");addLog(`오류: ${r.error}`,"err");_processing=false;return}
   showToast(`${name} ${r.count}건 완료`,"ok");
   if(r.details)r.details.forEach(d=>addLog(`  #${d.no} P${parseInt(d.qty)} ${d.jan} → 0`,"ok"));
   if(r.before_total!==undefined)addLog(`  잔량 ${r.before_total} → ${r.after_total}`,"ok");
   addLog(`${name} ${r.count}건 처리 완료`,"ok");
+  _processing=false;
   loadList();
 }
 
 async function processAll(){
+  if(_processing)return;
   if(!confirm("전체 거래처를 일괄 처리할까요?"))return;
+  _processing=true;
   showToast("전체 처리 중...");
   addLog("전체 처리 시작","info");
   const{min,max}=getRange();
   await sendCmd("config",{min,max});
   const id=await sendCmd("process_all");
-  if(!id)return;
-  const r=await waitResult(id);
-  if(!r){showToast("응답 없음","err");return}
-  if(r.error){showToast(r.error,"err");return}
+  if(!id){_processing=false;return;}
+  const r=await waitResult(id,30000);
+  if(!r){showToast("응답 없음","err");_processing=false;return}
+  if(r.error){showToast(r.error,"err");_processing=false;return}
   if(r.customers)r.customers.forEach(c=>addLog(`  ${c.name} ${c.count}건 (${c.total.toFixed(1)})`,"ok"));
   showToast(`전체 ${r.count}건 완료`,"ok");
   addLog(`전체 ${r.count}건 · ${(r.total_jan||0).toFixed(1)} 제거 완료`,"ok");
+  _processing=false;
   loadList();
 }
 
