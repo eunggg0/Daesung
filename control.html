@@ -403,12 +403,18 @@ function loadList(){
       }
       var html="";
       if(active.length){
-        html+='<div style="font-size:11px;font-weight:800;color:#6366f1;margin-bottom:6px;letter-spacing:0.5px;">처리 대상 '+active.length+'개</div>';
+        html+='<div style="font-size:11px;font-weight:800;color:#6366f1;margin-bottom:6px;letter-spacing:0.5px;cursor:pointer;display:flex;align-items:center;gap:6px;" onclick="toggleSection(\'secActive\')">'
+          +'<span id="secActiveArrow" style="transition:transform 0.2s;">▼</span>처리 대상 '+active.length+'개</div>'
+          +'<div id="secActive">';
         for(var i=0;i<active.length;i++) html+=renderRow(active[i],true);
+        html+='</div>';
       }
       if(done.length){
-        html+='<div style="font-size:11px;font-weight:800;color:#94a3b8;margin:12px 0 6px;letter-spacing:0.5px;">처리 완료 '+done.length+'개</div>';
+        html+='<div style="font-size:11px;font-weight:800;color:#94a3b8;margin:12px 0 6px;letter-spacing:0.5px;cursor:pointer;display:flex;align-items:center;gap:6px;" onclick="toggleSection(\'secDone\')">'
+          +'<span id="secDoneArrow" style="transition:transform 0.2s;">▼</span>처리 완료 '+done.length+'개</div>'
+          +'<div id="secDone">';
         for(var i=0;i<done.length;i++) html+=renderRow(done[i],false);
+        html+='</div>';
       }
       el.innerHTML=html;
       addLog(custs.length+"개 거래처, "+total+"건 조회","info");
@@ -450,6 +456,19 @@ function showDetail(code,name){
   });
 }
 function closeDetail(){document.getElementById("detailModal").style.display="none";}
+
+function toggleSection(id){
+  var el=document.getElementById(id);
+  var arrow=document.getElementById(id+"Arrow");
+  if(!el)return;
+  if(el.style.display==="none"){
+    el.style.display="block";
+    if(arrow)arrow.style.transform="rotate(0deg)";
+  }else{
+    el.style.display="none";
+    if(arrow)arrow.style.transform="rotate(-90deg)";
+  }
+}
 
 function toggleDoneBtn(code){
   var inp=document.getElementById("keep_"+code);
