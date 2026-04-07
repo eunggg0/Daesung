@@ -378,12 +378,12 @@ function loadList(){
         var right="";
         if(ht){
           right='<div style="display:flex;align-items:center;gap:5px;">'
-            +'<input class="keep-input" id="keep_'+c.code+'" type="number" value="0" min="0" step="0.1" placeholder="남김">'
+            +'<input class="keep-input" id="keep_'+c.code+'" type="number" value="" min="0" step="0.1" placeholder="남김">'
             +"<button class=\"cust-btn\" onclick=\"processOne('"+c.code+"','"+c.name+"')\">처리</button></div>";
         }else{
           right='<div style="display:flex;align-items:center;gap:5px;">'
             +'<input class="keep-input" id="keep_'+c.code+'" type="number" value="" min="0" step="0.1" placeholder="남김" oninput="toggleDoneBtn(\''+c.code+'\')">'
-            +"<button class=\"cust-btn cust-btn-off\" id=\""+btnId+"\" onclick=\"processOne('"+c.code+"','"+c.name+"')\">처리</button></div>";
+            +'<button class="cust-btn" id="'+btnId+'" style="background:#e2e8f0;color:#94a3b8;box-shadow:none;pointer-events:none;" onclick="processOne(\''+c.code+"','"+c.name+"')\">처리</button></div>";
         }
         var pj=c.p_jan||0;
         var bj=c.b_jan||0;
@@ -456,10 +456,14 @@ function toggleDoneBtn(code){
   if(!inp||!btn)return;
   var val=parseFloat(inp.value);
   if(val>0){
-    btn.className="cust-btn";
+    btn.style.background="linear-gradient(135deg,#22c55e,#16a34a)";
+    btn.style.color="white";
+    btn.style.boxShadow="0 2px 8px rgba(34,197,94,0.3)";
     btn.style.pointerEvents="auto";
   }else{
-    btn.className="cust-btn cust-btn-off";
+    btn.style.background="#e2e8f0";
+    btn.style.color="#94a3b8";
+    btn.style.boxShadow="none";
     btn.style.pointerEvents="none";
   }
 }
