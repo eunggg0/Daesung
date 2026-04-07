@@ -347,11 +347,15 @@ function loadList(){
         return;
       }
       var total=0;
-      var html="";
+      var active=[];
+      var done=[];
       for(var i=0;i<custs.length;i++){
         var c=custs[i];
         total+=c.count;
-        var ht=c.count>0;
+        if(c.count>0) active.push(c);
+        else done.push(c);
+      }
+      function renderRow(c,ht){
         var bottles="";
         if(c.bottles&&c.bottles.length){
           bottles=c.bottles.map(function(b){return"P"+b.qty+"×"+b.cnt}).join(" ");
@@ -363,13 +367,22 @@ function loadList(){
         if(ht){
           info+=' · <span>대상 <b style="color:#6366f1;">'+c.count+'</b>건 <b style="color:#6366f1;">'+c.total_jan.toFixed(1)+'</b></span>';
         }
-        html+='<div class="cust-row">'
+        return '<div class="cust-row">'
           +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">'
           +'<div style="display:flex;align-items:baseline;gap:8px;">'
           +'<div class="cust-name">'+c.name+'</div>'
           +'<span style="font-size:10px;color:#94a3b8;font-weight:500;">'+(bottles||"")+'</span>'
           +'</div>'+right+'</div>'
           +'<div class="cust-meta">'+info+'</div></div>';
+      }
+      var html="";
+      if(active.length){
+        html+='<div style="font-size:11px;font-weight:800;color:#6366f1;margin-bottom:6px;letter-spacing:0.5px;">처리 대상 '+active.length+'개</div>';
+        for(var i=0;i<active.length;i++) html+=renderRow(active[i],true);
+      }
+      if(done.length){
+        html+='<div style="font-size:11px;font-weight:800;color:#94a3b8;margin:12px 0 6px;letter-spacing:0.5px;">처리 완료 '+done.length+'개</div>';
+        for(var i=0;i<done.length;i++) html+=renderRow(done[i],false);
       }
       el.innerHTML=html;
       addLog(custs.length+"개 거래처, "+total+"건 조회","info");
