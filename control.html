@@ -254,6 +254,15 @@ body{
   </div>
 
 </div>
+<div id="detailModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:100;display:none;align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)closeDetail()">
+  <div style="background:white;border-radius:20px;width:100%;max-width:400px;max-height:80vh;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
+    <div style="padding:16px 20px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;">
+      <div style="font-size:16px;font-weight:800;color:#1e293b;" id="detailTitle">거래처</div>
+      <button onclick="closeDetail()" style="width:32px;height:32px;border:none;background:#f1f5f9;border-radius:10px;font-size:16px;cursor:pointer;color:#64748b;">✕</button>
+    </div>
+    <div id="detailBody" style="padding:12px 16px;overflow-y:auto;max-height:60vh;"></div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -367,7 +376,7 @@ function loadList(){
         return '<div class="cust-row">'
           +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">'
           +'<div style="display:flex;align-items:baseline;gap:8px;">'
-          +'<div class="cust-name">'+c.name+'</div>'
+          +'<div class="cust-name" style="cursor:pointer;text-decoration:underline;text-decoration-color:#cbd5e1;" onclick="showDetail(\''+c.code+"','"+c.name+"')\">"+c.name+'</div>'
           +'<span style="font-size:10px;color:#94a3b8;font-weight:500;">'+(bottles||"")+'</span>'
           +'</div>'+right+'</div>'
           +'<div class="cust-meta">'+info+'</div></div>';
@@ -386,6 +395,41 @@ function loadList(){
     });
   });
 }
+
+function showDetail(code,name){
+  var modal=document.getElementById("detailModal");
+  var body=document.getElementById("detailBody");
+  document.getElementById("detailTitle").textContent=name;
+  body.innerHTML='<div class="empty"><div class="spinner"></div>불러오는 중...</div>';
+  modal.style.display="flex";
+  sendCmd("detail",{code:code}).then(function(id){
+    if(!id)return;
+    waitResult(id,10000).then(function(r){
+      if(!r||r.error){body.innerHTML='<div class="empty">데이터를 불러올 수 없습니다</div>';return}
+      var items=r.items||[];
+      if(!items.length){body.innerHTML='<div class="empty">용기 데이터가 없습니다</div>';return}
+      var rng=getRange();
+      var h='<table style="width:100%;border-collapse:collapse;font-size:12px;">'
+        +'<tr style="border-bottom:2px solid #e2e8f0;color:#94a3b8;font-weight:700;text-align:left;">'
+        +'<td style="padding:8px 4px;">번호</td><td>용기</td><td>잔량</td><td>충전량</td><td>시간</td></tr>';
+      for(var i=0;i<items.length;i++){
+        var d=items[i];
+        var isTarget=d.jan>0&&d.jan>=rng.min&&d.jan<=rng.max;
+        var color=d.jan>0?(isTarget?"#6366f1":"#d97706"):(d.jan<0?"#dc2626":"#94a3b8");
+        var bg=isTarget?"#f5f3ff":"";
+        h+='<tr style="border-bottom:1px solid #f1f5f9;'+(bg?'background:'+bg:'')+'">'
+          +'<td style="padding:8px 4px;color:#94a3b8;">#'+d.no+'</td>'
+          +'<td style="font-weight:700;">P'+d.qty+'</td>'
+          +'<td style="font-weight:700;color:'+color+';">'+d.jan.toFixed(3)+'</td>'
+          +'<td style="color:#64748b;">'+d.fill.toFixed(1)+'</td>'
+          +'<td style="color:#94a3b8;font-size:10px;">'+d.time+'</td></tr>';
+      }
+      h+='</table>';
+      body.innerHTML=h;
+    });
+  });
+}
+function closeDetail(){document.getElementById("detailModal").style.display="none";}
 
 var _processing=false;
 function processOne(code,name){
