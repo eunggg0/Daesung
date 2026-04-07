@@ -438,16 +438,18 @@ function processAll(){
   });
 }
 
-var _lastAlive=false,_failCnt=0;
+var _lastAlive=false,_failCnt=0,_okCnt=0;
 function pollStatus(){
   fetch(fb("proc_status.json")).then(function(r){return r.json()}).then(function(pd){
     var now=Math.floor(Date.now()/1000);
-    _lastAlive=pd&&pd.status==="on"&&pd.ts&&(now-pd.ts)<30;
+    var alive=pd&&pd.status==="on"&&pd.ts&&(now-pd.ts)<60;
     _failCnt=0;
+    if(alive){_okCnt++;_lastAlive=true;}
+    else{_okCnt=0;_lastAlive=false;}
     updateStatus();
   }).catch(function(){
     _failCnt++;
-    if(_failCnt>=3){_lastAlive=false;updateStatus();}
+    if(_failCnt>=5){_lastAlive=false;_okCnt=0;updateStatus();}
   });
 }
 function updateStatus(){
@@ -457,7 +459,7 @@ function updateStatus(){
 
 addLog("앱 시작","info");
 pollStatus();
-setInterval(pollStatus,5000);
+setInterval(pollStatus,10000);
 loadList();
 </script>
 </body>
