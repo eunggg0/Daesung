@@ -239,10 +239,7 @@ body{
       <div class="card-badge" id="custCount">—</div>
     </div>
     <div id="custList">
-      <div class="empty">
-        <div class="empty-icon">📋</div>
-        새로고침을 눌러 목록을 불러오세요
-      </div>
+      <div class="empty">목록을 불러오는 중...</div>
     </div>
   </div>
 
@@ -332,7 +329,7 @@ function loadList(){
     if(!id)return;
     waitResult(id,15000).then(function(result){
       if(!result){
-        el.innerHTML='<div class="empty" style="color:#dc2626">PC 스크립트 응답 없음</div>';
+        el.innerHTML='<div class="empty">PC 응답 없음 — 스크립트 실행 중인지 확인하세요</div>';
         return;
       }
       if(result.error){
@@ -342,7 +339,7 @@ function loadList(){
       var custs=result.customers||[];
       badge.textContent=custs.length+"개";
       if(!custs.length){
-        el.innerHTML='<div class="empty"><div class="empty-icon">✅</div>처리할 거래처가 없습니다</div>';
+        el.innerHTML='<div class="empty">거래처가 없습니다</div>';
         addLog("거래처 0건","info");
         return;
       }
