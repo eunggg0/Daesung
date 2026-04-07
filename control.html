@@ -366,7 +366,8 @@ function loadList(){
       for(var i=0;i<custs.length;i++){
         var c=custs[i];
         total+=c.count;
-        if(c.count>0) active.push(c);
+        var hasJan=(c.p_jan||0)>0;
+        if(c.count>0||hasJan) active.push(c);
         else done.push(c);
       }
       function renderRow(c,ht){
@@ -381,7 +382,7 @@ function loadList(){
         var bj=c.b_jan||0;
         var info='<span>잔량 <b style="color:#d97706;">'+pj.toFixed(1)+'</b></span>';
         if(bj>0) info+=' · <span>부탄 <b style="color:#dc2626;">'+bj.toFixed(1)+'</b></span>';
-        if(ht){
+        if(c.count>0){
           info+=' · <span>대상 <b style="color:#6366f1;">'+c.count+'</b>건 <b style="color:#6366f1;">'+c.total_jan.toFixed(1)+'</b></span>';
         }
         return '<div class="cust-row">'
