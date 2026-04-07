@@ -385,14 +385,15 @@ async function loadList(){
     if(c.bottles&&c.bottles.length){
       bottles=c.bottles.map(function(b){return"P"+b.qty+"×"+b.cnt}).join(" ");
     }
-    let info='<span style="color:#475569;">'+(bottles||("용기 "+c.total+"개"))+'</span>'
-      +'<span style="color:#475569;">잔량 <b style="color:#f59e0b;">'+c.all_jan.toFixed(1)+'</b></span>';
+    let info='<span style="color:#475569;">잔량 <b style="color:#f59e0b;">'+c.all_jan.toFixed(1)+'</b></span>';
     if(ht){
-      info+='<span style="color:#475569;">처리 대상 <b style="color:#34d399;">'+c.count+'</b>건 <b style="color:#34d399;">'+c.total_jan.toFixed(1)+'</b></span>';
+      info+='<span style="color:#475569;">대상 <b style="color:#34d399;">'+c.count+'</b>건 <b style="color:#34d399;">'+c.total_jan.toFixed(1)+'</b></span>';
     }
     html+='<div class="cust-row" style="flex-direction:column;align-items:stretch;gap:8px;">'
       +'<div style="display:flex;align-items:center;justify-content:space-between;">'
-      +'<div class="cust-name">'+c.name+'</div>'+right+'</div>'
+      +'<div style="display:flex;align-items:baseline;gap:8px;"><div class="cust-name">'+c.name+'</div>'
+      +'<span style="font-size:10px;color:#64748b;">'+(bottles||"")+'</span></div>'
+      +right+'</div>'
       +'<div style="display:flex;gap:12px;font-size:11px;">'+info+'</div></div>';
   }
   el.innerHTML=html;
