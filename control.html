@@ -106,6 +106,7 @@ body{
   text-align:center;outline:none;
 }
 .keep-input:focus{border-color:#f59e0b;background:#fffbeb;}
+.keep-input::placeholder{color:#cbd5e1;font-weight:500;font-size:12px;}
 .cust-btn{
   height:40px;padding:0 20px;border-radius:12px;border:none;
   background:linear-gradient(135deg,#22c55e,#16a34a);
@@ -378,11 +379,11 @@ function loadList(){
         var right="";
         if(ht){
           right='<div style="display:flex;align-items:center;gap:5px;">'
-            +'<input class="keep-input" id="keep_'+c.code+'" type="number" value="" min="0" step="0.1" placeholder="">'
+            +'<input class="keep-input" id="keep_'+c.code+'" type="number" value="" min="0" step="0.1" placeholder="남김">'
             +"<button class=\"cust-btn\" onclick=\"processOne('"+c.code+"','"+c.name+"')\">처리</button></div>";
         }else{
           right='<div style="display:flex;align-items:center;gap:5px;">'
-            +'<input class="keep-input" id="keep_'+c.code+'" type="number" value="" min="0" step="0.1" placeholder="" oninput="toggleDoneBtn(\''+c.code+'\')">'
+            +'<input class="keep-input" id="keep_'+c.code+'" type="number" value="" min="0" step="0.1" placeholder="남김" oninput="toggleDoneBtn(\''+c.code+'\')">'
             +'<button class="cust-btn" id="'+btnId+'" style="background:#e2e8f0;color:#94a3b8;box-shadow:none;pointer-events:none;" onclick="processOne(\''+c.code+"','"+c.name+"')\">처리</button></div>";
         }
         var pj=c.p_jan||0;
