@@ -367,7 +367,7 @@ function loadList(){
       for(var i=0;i<custs.length;i++){
         var c=custs[i];
         total+=c.count;
-        if(c.count>0) active.push(c);
+        if(c.count>0||(c.p_jan||0)>0||(c.b_jan||0)>0) active.push(c);
         else done.push(c);
       }
       function renderRow(c,ht){
