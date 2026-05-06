@@ -276,7 +276,8 @@ body{
 
 <script>
 const FB="https://daesung-f71ea-default-rtdb.firebaseio.com";
-function fb(p){return FB+"/"+p}
+const SECRET="Daesung_Janryang_K9mF2pX7vQ";
+function fb(p){return FB+"/"+SECRET+"/"+p}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}
 
 function showToast(msg,type){
